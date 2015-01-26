@@ -23,9 +23,15 @@
             {% if voteExpired %}
             <p>El plazo de la votación ha finalizado.</p>
             {% else %}
+            
+            <div>
+                {% if msg %}
+                <p>{{ msg }}</p>
+                {% endif%}
+            </div>
             <div class="form-main">
                 {% if canVote %}
-                <form id="login_form"  method="post" action="list.php">
+                <form id="login_form"  method="post" action="register.php">
                     <div class="form-group">
                         <input type="text" name="nif_login" id="nif_login" class="form-control" placeholder="NIF">
                         <input type="password" name="pass_login" id="pass_login" class="form-control" placeholder="Contraseña">

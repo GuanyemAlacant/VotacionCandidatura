@@ -12,12 +12,16 @@ if(isset($_GET["hash"]))
 		$result->execute();
         
         // step1: check hash exists
+        $user     = FALSE;
         $hash     = $_GET["hash"];
         $data     = array('hash' => $hash);
         $result   = $conn->prepare("SELECT * FROM cnd_newpass WHERE hash=:hash;");
 		$result->execute($data);
-		$user = $result->fetch(PDO::FETCH_ASSOC);
-
+        if($result->rowCount() == 1)
+        {
+            $user = $result->fetch(PDO::FETCH_ASSOC);
+        }
+        
         if($user !== FALSE)
         {
             // step2: remove hash row
@@ -72,6 +76,7 @@ if(isset($_GET["hash"]))
 else
 {
     header('Location:index.php');
+    die();
 }
 
 ?>

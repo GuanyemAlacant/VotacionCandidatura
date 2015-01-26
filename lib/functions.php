@@ -2,6 +2,9 @@
 include_once "config.php";
 include_once "PasswordHash.php";
 
+//La coloco aquí para asegurar que se ejecuta siempre una única vez.
+session_start();
+
 //-------------------------------------
 function ParseCSVFiles()
 {
@@ -143,47 +146,50 @@ function Login($nif, $pass)
 	$hasher = new PasswordHash(8, FALSE);
 	try
 	{
-		
 		$conn   = getBBDD();
 		$user   = array(
 			'nif' => $nif
 		);
 		$result = $conn->prepare("SELECT id, password FROM cnd_users WHERE nif=:nif;");
 		$result->execute($user);
+		if($result->rowCount() == 1)
+        {
+            $cont = $result->fetch(PDO::FETCH_ASSOC);
+            if($cont !== FALSE)
+            {
+                $password = $cont['password'];
+                $user_id  = $cont['id'];
+            }
 		
-		foreach($result as $cont)
-		{
-			$password = $cont['password'];
-			$user_id  = $cont['id'];
-		}
-		
-		//comprueba que usuario y contraseña coinciden y crea sesión de usuario.
-		if($hasher->CheckPassword($pass, $password))
-		{
-			if(!isset($_SESSION["login_user"]))
-			{
-				$_SESSION["login_user"] = $user_id;
-			}
-			if(isset($_SESSION['error']))
-			{
-				unset($_SESSION['error']);
-			}
-			//Envía al index
-			header('Location: index.php');
-		}
-		else
-		{
-			//Si no coinciden envía a login con sesión de error.
-			$_SESSION["error"] = "error";
-			header('Location: login.php');
-		}
+            //comprueba que usuario y contraseña coinciden y crea sesión de usuario.
+            if($hasher->CheckPassword($pass, $password))
+            {
+                if(!isset($_SESSION["login_user"]))
+                {
+                    $_SESSION["login_user"] = $user_id;
+                }
+                if(isset($_SESSION['error']))
+                {
+                    unset($_SESSION['error']);
+                }
+
+                //Envía al index
+                header('Location: index.php');
+                die();
+            }
+        }
 	}
 	catch(PDOException $e)
 	{
 		echo $e->getMessage();
 	}
-	
+
 	$conn = null;
+    
+    //Si no coinciden envía a login con sesión de error.
+    $_SESSION["error"] = "Datos de acceso inválidos.";
+    header('Location: login.php');
+    die();
 }
 
 //-------------------------------------
@@ -192,6 +198,13 @@ function Logout()
 {
 	unset($_SESSION['login_user']);
 	header('Location: index.php');
+    die();
+}
+
+//-------------------------------------
+function IsLogged()
+{
+	return (isset($_SESSION['login_user']) && empty($_SESSION['login_user']) == false);
 }
 
 //-------------------------------------

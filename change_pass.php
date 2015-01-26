@@ -22,9 +22,13 @@ if(isset($_POST["nif_login"]) && isset($_POST["old_pass_login"]) && isset($_POST
 		);
         
         // step1: check exists
+        $user     = FALSE; 
         $result   = $conn->prepare("SELECT * FROM cnd_users WHERE nif=:nif");
 		$result->execute($user);
-		$user = $result->fetch(PDO::FETCH_ASSOC);
+        if($result->rowCount() == 1)
+        {
+            $user = $result->fetch(PDO::FETCH_ASSOC);
+        }
 
         if($user !== FALSE && $hasher->CheckPassword($old_pass, $user['password']))
         {
@@ -68,5 +72,6 @@ if(isset($_POST["nif_login"]) && isset($_POST["old_pass_login"]) && isset($_POST
 else
 {
     header('Location:change.php');
+    die();
 }
 ?>

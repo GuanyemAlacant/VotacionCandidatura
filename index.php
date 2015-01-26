@@ -1,7 +1,7 @@
 <?php
 include_once "lib/functions.php";
 
-$canVote     = false;
+$canVote     = true;
 $voteExpired = false;
 
 $userData = GetAuthenticated();
@@ -10,9 +10,10 @@ $datos = array('voteExpired' => $voteExpired,
               'canVote' => $canVote,
               'user' => $user_id);
 
-if($canVote && $voteExpired == false && empty($user_id))
-{
+if($canVote && $voteExpired == false && IsLogged() == false)
+{   
     header('Location:login.php');
+    die();
 }
 else
 {

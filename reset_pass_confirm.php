@@ -15,10 +15,14 @@ if(isset($_POST["nif_login"]))
         $result->execute();
         
         // step1: check nif exists
+        $user   = FALSE;
         $data   = array($nif);
         $result = $conn->prepare("SELECT * FROM cnd_users WHERE nif=?");
 		$result->execute($data);
-        $user = $result->fetch(PDO::FETCH_ASSOC);
+        if($result->rowCount() == 1)
+        {
+            $user = $result->fetch(PDO::FETCH_ASSOC);
+        }
         
         if($user !== FALSE)
         {
@@ -62,5 +66,5 @@ if(isset($_POST["nif_login"]))
 }
 
 header('Location:index.php');
-
+die();
 ?>
