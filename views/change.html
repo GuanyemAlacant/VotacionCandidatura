@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block title %} Cambio de contraseña {% endblock %}
+
+{% block scripts %}
+<script>
+	$(document).ready(function() {
+
+	});
+</script>
+
+{% endblock %}
+
+
+{% block main_container %}
+	<div class="row">
+		<div class="col-xs-12">
+			<h1 class="center">Cambio de contraseña</h1>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-xs-12">
+            <div class="form-main">
+                <form method="post" action="change_pass.php">
+                    <div class="form-group">
+                        
+                        <div class="input-group margin-bottom-sm">
+                            <span class="input-group-addon"><i class="fa fa-user fa-fw"></i></span>
+                            <input type="text" name="nif_login" id="nif_login" class="form-control" placeholder="NIF">
+                        </div>
+                        <div class="input-group margin-bottom-sm">
+                            <span class="input-group-addon"><i class="fa fa-key fa-fw"></i></span>
+                            <input type="password" name="old_pass_login" id="old_pass_login" class="form-control" placeholder="Antigüa contraseña">
+                        </div>
+                        <div class="input-group margin-bottom-sm">
+                            <span class="input-group-addon"><i class="fa fa-key fa-fw"></i></span>
+                            <input type="password" name="new_pass_login" id="new_pass_login" class="form-control" placeholder="Nueva contraseña">
+                        </div>
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="fa fa-key fa-fw"></i></span>
+                            <input type="password" name="rep_pass_login" id="rep_pass_login" class="form-control" placeholder="Repita contraseña">
+                        </div>
+                        
+                    </div>
+                    <button id="button_login" type="submit" class="btn btn-block signin">Cambiar</button>
+                </form>
+            </div>
+            <div class="form-footer">
+                <div class="row">
+                    <div class="col-xs-7">
+                        <a href="index.php" id="renew_form"><i class="fa fa-arrow-left circled-icon"></i> Volver</a>
+                    </div>
+                </div>
+            </div>
+            
+		</div>
+	</div>
+{% endblock %}
+

@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block title %} Candidaturas {% endblock %}
+
+{% block scripts %}
+<script>
+	$(document).ready(function() {
+
+	});
+</script>
+
+{% endblock %}
+
+
+{% block main_container %}
+	<div class="row">
+		<div class="col-xs-12">
+			<h1 class="center">Candidaturas de {% include 'texto_ganemos.html' %}</h1>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-xs-12">
+            {% if voteExpired %}
+            <p>El plazo de la votación ha finalizado.</p>
+            {% else %}
+            <div class="form-main">
+                {% if canVote %}
+                <form id="login_form"  method="post" action="list.php">
+                    <div class="form-group">
+                        <input type="text" name="nif_login" id="nif_login" class="form-control" placeholder="NIF">
+                        <input type="password" name="pass_login" id="pass_login" class="form-control" placeholder="Contraseña">
+                    </div>
+                    <button id="button_login" type="submit" class="btn btn-block signin">Entrar</button>
+                </form>
+                {% else %}
+                <p>La votación no es posible hasta el próximo día 5-6-7 de Marzo de 2015.</p>
+                {% endif %}
+            </div>
+            <div class="form-footer">
+                <div class="row">
+                    <div class="col-xs-7">
+                        <i class="fa fa-unlock-alt circled-icon"></i>
+                        <a href="change.php" id="change_form">Cambiar Contraseña</a>
+                    </div>
+                    <div class="col-xs-5">
+                        <i class="fa fa-refresh circled-icon"></i>
+                        <a href="reset.php" id="recover_form">Restablecer Contraseña</a>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col-xs-12">
+            <p>Para poder participar en la votación es necesario censarse en los puntos de censo acreditados.</p>
+        </div>
+    </div>
+{% endblock %}
+

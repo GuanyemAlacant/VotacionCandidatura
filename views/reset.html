@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block title %} Restablecer contraseña {% endblock %}
+
+{% block scripts %}
+<script>
+	$(document).ready(function() {
+
+	});
+</script>
+
+{% endblock %}
+
+
+{% block main_container %}
+	<div class="row">
+		<div class="col-xs-12">
+			<h1 class="center">Restablecer contraseña</h1>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-xs-12">
+            <div class="form-main">
+                <form method="post" action="reset_pass_confirm.php">
+                    <div class="form-group">
+                        
+                        <div class="input-group margin-bottom-sm">
+                            <span class="input-group-addon"><i class="fa fa-user fa-fw"></i></span>
+                            <input type="text" name="nif_login" id="nif_login" class="form-control" placeholder="NIF">
+                        </div>
+                        
+                    </div>
+                    <button id="button_login" type="submit" class="btn btn-block signin">Restablecer</button>
+                </form>
+            </div>
+            <div class="form-footer">
+                <div class="row">
+                    <div class="col-xs-7">
+                        <a href="index.php"><i class="fa fa-arrow-left circled-icon"></i> Volver</a>
+                    </div>
+                </div>
+            </div>
+            
+		</div>
+	</div>
+{% endblock %}
+

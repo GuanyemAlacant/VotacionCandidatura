@@ -1,0 +1,12 @@
+<html> 
+    <body> 
+    
+    <h1>Cambio de contraseña</h1> 
+    <p>Nuestro sistema ha recibido un cambio de contraseña vinculada con este correo.</p>
+    <p>Si usted no ha realizado este cambio, pongase en contacto con nosotros para solucionar su incidencia.</p>
+    <p>Si ha realizado el cambio usted mismo puede borrar este mensaje.</p>
+    <p></p>
+    <p>email: info@guanyemalacant.org</p>
+    <p>web: http://www.guanyemalacant.org</p>
+    </body> 
+    </html>

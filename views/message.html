@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title %} {{ title }} {% endblock %}
+{% block scripts %}
+<script>
+	$(document).ready(function() {
+
+	});
+</script>
+
+{% endblock %}
+
+
+{% block main_container %}
+	<div class="row">
+		<div class="col-xs-12">
+			<h1 class="center">{{ title }}</h1>
+            <p>{{ msg }}</p>
+		</div>
+	</div>
+{% endblock %}
+
