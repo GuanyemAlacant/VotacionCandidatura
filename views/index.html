@@ -15,7 +15,68 @@
 {% block main_container %}
 	<div class="row">
 		<div class="col-xs-12">
-			<h1 class="center">Listado de candidaturas</h1>
+			<h1 class="center">Listado de candidaturas <a href="#" alt="Ayuda" target="_blank"><i class="fa fa-info-circle"></i></a></h1>
+            
+            {%if candidates %}
+            <ul class="list-group candidateGroup">
+                {% for candidate in candidates %}
+                <li class="list-group-item candidateItem">
+                    <div class="media">
+                        <div class="media-left media-middle"><a href="{{candidate.url_detalle}}" alt="Abrir perfil del candidato" target="_blank"><img class="media-object" src="{{candidate.url_foto}}" /></a></div>
+                        <div class="media-body">
+                            <h4 class="media-heading">{{candidate.nombre}} <a href="{{candidate.url_detalle}}" alt="Abrir perfil del candidato" target="_blank"><i class="fa fa-arrow-right"></i></a></h4>
+                            <p>{{candidate.descripcion}}</p>
+                            <p class=""><a href="#" class="btn btn-primary pull-right" role="button">Votar</a></p>
+                            <p><div class="dropdown pull-right">
+                                <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true">
+                                Votar
+                                <span class="caret"></span>
+                                </button>
+                            </div></p>
+                            <p>
+                        
+                          <div class="btn-group pull-right" role="group" aria-label="votation-group">
+                            <button type="button" class="btn btn-default disabled">1</button>
+                            <button type="button" class="btn btn-default">2</button>
+                            <button type="button" class="btn btn-default">3</button>
+                            <button type="button" class="btn btn-default">4</button>
+                            <button type="button" class="btn btn-default">5</button>
+                            <button type="button" class="btn btn-default">6</button>
+                            <button type="button" class="btn btn-default">7</button>
+                            <button type="button" class="btn btn-default">8</button>
+                            <button type="button" class="btn btn-default">9</button>
+                            <button type="button" class="btn btn-default">10</button>
+                          </div>
+                        
+                        </div>
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+            
+
+            <div class="row">
+                    {% for candidate in candidates %}
+                <div class="col-sm-6 col-md-4">
+                    <div class="thumbnail">
+                        <a href="{{candidate.url_detalle}}" alt="Abrir perfil del candidato" target="_blank"><img src="{{candidate.url_foto}}" alt="{{candidate.nombre}}"></a>
+                        <div class="caption">
+                            <h3>{{candidate.nombre}} <a href="{{candidate.url_detalle}}" alt="Abrir perfil del candidato" target="_blank"><i class="fa fa-arrow-right"></i></a></h3>
+                            <p>{{candidate.descripcion}}</p>
+                            <p><a href="#" class="btn btn-primary" role="button">Button</a></p>
+                        </div>
+                    </div>
+                </div>
+                    {% endfor %}
+            </div>
+            
+            
+            <button id="button_login" type="submit" class="btn btn-block signin disabled">Votar</button>
+            
+            
+            {% else %}
+            <p>El proceso electoral todavía no esta en marcha. Por favor, vuelva en las fechas indicadas.</p>
+            {% endif %}            
 		</div>
 	</div>
 {% endblock %}
