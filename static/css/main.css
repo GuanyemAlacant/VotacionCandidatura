@@ -429,3 +429,9 @@ nav a:hover, nav a:focus {
 .candidateGroup .candidateItem:hover {
     background: #fff;
 }
+
+.vote_selected
+{
+    background-color: #90c090;
+    font-weight: bolder;
+}
