@@ -224,10 +224,17 @@
                     // Gets triggered when the files have successfully been sent.
                     // Redirect user or notify of success.
                     //window.location = "index.php";
-                    $('button[type=submit]').show();
-                    $('.form-main').append('<p class="full-error">Se han enviado los datos correctamente.</p>');
-                    $('#msg_error').hide();
-                    $('#msg_success').hide().html('Sus datos se han enviado correctamente').show('slow').delay(2500).hide('slow');
+                    if(response === "true")
+                    {
+                        $('#msg_error').hide();
+                        $('#msg_success').hide().html('Sus datos se han enviado correctamente. En breve le remitiremos un correo con la confirmación de su inscripción y una clave de acceso al sistema de votaciones.<br />En caso de no recibir confirmación pongase en contacto con nosotros: <a href="mailto:candidaturaguanyem@gmail.com">candidaturaguanyem@gmail.com</a>').show('slow');
+                    }
+                    else
+                    {
+                        $('button[type=submit]').show();
+                        $('#msg_success').hide();
+                        $('#msg_error').hide().html('Se ha producido un error enviando los datos, por favor vuelva a intentarlo. Si el problema persiste pongase en contacto con nosotros: <a href="mailto:candidaturaguanyem@gmail.com">candidaturaguanyem@gmail.com</a>').show('slow');
+                    }
                 });
                 this.on("errormultiple", function(files, response) {
                     // Gets triggered when there was an error sending the files.
@@ -235,11 +242,8 @@
                     $('button[type=submit]').show();
                     $('#msg_success').hide();
                     $('#msg_error').hide().html('Error: '+response).show('slow').delay(2500).hide('slow');
-
                 });
             }
-            
-            
         };
 	});
 </script>

@@ -2,7 +2,7 @@
 //Protegido por seguridad
 
 // descomentar en modo debug
-ini_set('display_errors', '1');
+//ini_set('display_errors', '1');
 
 //--
 // Base de datos

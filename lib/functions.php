@@ -1,6 +1,7 @@
 <?php
 include_once "config.php";
 include_once "PasswordHash.php";
+include_once "sendmail.php";
 
 //La coloco aquí para asegurar que se ejecuta siempre una única vez.
 session_start();
@@ -343,27 +344,6 @@ function CreateConfirmationHash($user_id, $time, $nif)
     return($output);
 }
 
-//-------------------------------------
-function SendMailHTML($mail, $subject, $body) 
-{
-    $from = 'info@guanyemalacant.org';
-
-    //para el envío en formato HTML 
-    $headers = "MIME-Version: 1.0\r\n"; 
-    $headers .= "Content-type: text/html; charset=iso-8859-1\r\n"; 
-    //dirección del remitente 
-    $headers .= "From: ".$from."\r\n"; 
-    //dirección de respuesta, si queremos que sea distinta que la del remitente 
-    $headers .= "Reply-To: ".$from."\r\n"; 
-    //ruta del mensaje desde origen a destino 
-    $headers .= "Return-path: ".$from."\r\n"; 
-
-    
-    file_put_contents("./mail.txt", $body);
- 
-    
-    return mail($mail, $subject, $body, $headers);
-}
 
 //-------------------------------------
 function GeneratePassword($length=8, $strength=15) {

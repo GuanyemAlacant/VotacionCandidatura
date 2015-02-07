@@ -1,5 +1,30 @@
 <?php
-function multi_attach_mail($to, $subject, $body, $files, $sendermail)
+
+
+//-------------------------------------
+function SendMailHTML($mail, $subject, $body) 
+{
+    $from = 'info@guanyemalacant.org';
+
+    //para el envío en formato HTML 
+    $headers = "MIME-Version: 1.0\r\n"; 
+    $headers .= "Content-type: text/html; charset=iso-8859-1\r\n"; 
+    //dirección del remitente 
+    $headers .= "From: ".$from."\r\n"; 
+    //dirección de respuesta, si queremos que sea distinta que la del remitente 
+    $headers .= "Reply-To: ".$from."\r\n"; 
+    //ruta del mensaje desde origen a destino 
+    $headers .= "Return-path: ".$from."\r\n"; 
+
+    
+    //file_put_contents("./mail.txt", $body);
+ 
+    
+    return mail($mail, $subject, $body, $headers);
+}
+
+//-------------------------------------
+function SendMailMultiAttach($to, $subject, $body, $files, $fileNames, $sendermail)
 {
     // email fields: to, from, subject, and so on
     $from = "Files attach <".$sendermail.">"; 
@@ -7,9 +32,9 @@ function multi_attach_mail($to, $subject, $body, $files, $sendermail)
         $subject = date("d.M H:i")." F=".count($files); 
     
     if(!isset($body))
-        $message = date("Y.m.d H:i:s")."\n".count($files)." attachments";
-    else 
-        $message = $body;
+        $body = date("Y.m.d H:i:s")."\n".count($files)." attachments";
+    
+    $headers = "";
     $headers = "From: $from";
 
     // boundary 
@@ -20,31 +45,43 @@ function multi_attach_mail($to, $subject, $body, $files, $sendermail)
     $headers .= "\nMIME-Version: 1.0\n" . "Content-Type: multipart/mixed;\n" . " boundary=\"{$mime_boundary}\""; 
 
     // multipart boundary 
-    $message = "--{$mime_boundary}\n" . "Content-Type: text/plain; charset=\"iso-8859-1\"\n" .
-    "Content-Transfer-Encoding: 7bit\n\n" . $message . "\n\n"; 
+    $message = "--{$mime_boundary}\n" . "Content-Type: text/html; charset=\"iso-8859-1\"\n" .
+    "Content-Transfer-Encoding: 7bit\n\n" . $body . "\n\n"; 
 
     // preparing attachments
     for($i=0;$i<count($files);$i++)
     {
         if(is_file($files[$i]))
         {
-            $message .= "--{$mime_boundary}\n";
             $fp       =    @fopen($files[$i],"rb");
             $data     =    @fread($fp,filesize($files[$i]));
             @fclose($fp);
             $data     = chunk_split(base64_encode($data));
-            $message .= "Content-Type: application/octet-stream; name=\"".basename($files[$i])."\"\n" . 
-            "Content-Description: ".basename($files[$i])."\n" .
-            "Content-Disposition: attachment;\n" . " filename=\"".basename($files[$i])."\"; size=".filesize($files[$i]).";\n" . 
+            
+            //--
+            $fileName = $files[$i];
+            if(isset($fileNames) && count($fileNames) > $i)
+            {
+                $fileName = $fileNames[$i];
+            }
+            
+            //--
+            $message .= "--{$mime_boundary}\n";
+            $message .= "Content-Type: application/octet-stream; name=\"".basename($fileName)."\"\n" . 
+            "Content-Description: ".basename($fileName)."\n" .
+            "Content-Disposition: attachment;\n" . " filename=\"".basename($fileName)."\"; size=".filesize($files[$i]).";\n" . 
             "Content-Transfer-Encoding: base64\n\n" . $data . "\n\n";
         }
     }
     $message .= "--{$mime_boundary}--";
-    $returnpath = "-f" . $sendermail;
-    $ok = @mail($to, $subject, $message, $headers, $returnpath); 
+    //$returnpath = "-f" . $sendermail;
+
+    //echo $subject."\n\n".$headers.$message;
+
+    $ok = @mail($to, $subject, $message, $headers); //, $returnpath); 
     if($ok)
-    { 
-        return $i; 
+    {
+        return $i;
     } 
     else
     { 
