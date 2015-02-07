@@ -1,6 +1,9 @@
 <?php
 //Protegido por seguridad
 
+// descomentar en modo debug
+ini_set('display_errors', '1');
+
 //--
 // Base de datos
 function getBBDD()

@@ -1,0 +1,310 @@
+{% extends "base.html" %}
+
+{% block title %} Inscripción de votante {% endblock %}
+
+{% block scripts %}
+
+<link rel="stylesheet" type="text/css" href="static/css/dropzone.css">
+<script src="static/js/dropzone.js"></script>
+<script>
+	$(document).ready(function() {
+        
+        //--
+        jQuery.validator.addMethod("enough_age", function(value, element) {
+            var dateParts = value.split("/");
+            var selectedDate = new Date(dateParts[2], dateParts[1], dateParts[0]);
+            return this.optional(element) || (selectedDate < new Date(1999,3,4));
+        }, "Debe ser mayor de edad para poder participar.");
+        
+        $.validator.addMethod("synchronousRemote", function (value, element, param) {
+            if (this.optional(element)) {
+                return "dependency-mismatch";
+            }
+
+            var previous = this.previousValue(element);
+            if (!this.settings.messages[element.name]) {
+                this.settings.messages[element.name] = {};
+            }
+            previous.originalMessage = this.settings.messages[element.name].remote;
+            this.settings.messages[element.name].remote = previous.message;
+
+            param = typeof param === "string" && { url: param } || param;
+
+            if (previous.old === value) {
+                return previous.valid;
+            }
+
+            previous.old = value;
+            var validator = this;
+            this.startRequest(element);
+            var data = {};
+            data[element.name] = value;
+            var valid = "pending";
+            $.ajax($.extend(true, {
+                url: param,
+                async: false,
+                mode: "abort",
+                port: "validate" + element.name,
+                dataType: "json",
+                data: data,
+                success: function (response) {
+                    validator.settings.messages[element.name].remote = previous.originalMessage;
+                    valid = response === true || response === "true";
+                    if (valid) {
+                        var submitted = validator.formSubmitted;
+                        validator.prepareElement(element);
+                        validator.formSubmitted = submitted;
+                        validator.successList.push(element);
+                        delete validator.invalid[element.name];
+                        validator.showErrors();
+                    } else {
+                        var errors = {};
+                        var message = response || validator.defaultMessage(element, "remote");
+                        errors[element.name] = previous.message = $.isFunction(message) ? message(value) : message;
+                        validator.invalid[element.name] = true;
+                        validator.showErrors(errors);
+                    }
+                    previous.valid = valid;
+                    validator.stopRequest(element, valid);
+                }
+            }, param));
+            return valid;
+        }, "Please fix this field.");
+        
+        //--
+        $("#signon-form").validate({
+            rules: {
+                signon_nombre : {
+                    required: true
+                },
+                signon_apellidos : {
+                    required: true
+                },
+                signon_nif : {
+                    required: true
+                },
+                signon_direccion : {
+                    required: true
+                },
+                signon_cp : {
+                    required: true
+                },
+                signon_email : {
+                    //remote: "lib/validate_email_db.php",
+                    synchronousRemote: "lib/validate_email_db.php",
+                    required: true,
+                    email: true
+                },
+                signon_telefono : {
+                    required: true
+                },
+                signon_fecha_nacimiento : {
+                    required: true,
+                    enough_age: true
+                },
+                signon_manifiesto : {
+                    required: true
+                }
+            },
+            messages: {
+                signon_nombre : {
+                    required: "Indique su nombre."
+                },
+                signon_apellidos : {
+                    required: "Indique sus apellidos."
+                },
+                signon_nif : {
+                    required: "Indique su NIF."
+                },
+                signon_direccion : {
+                    required: "Indique su dirección."
+                },
+                signon_cp : {
+                    required: "Indique su código postal."
+                },
+                signon_email : {
+                    required: "Indique su email.",
+                    synchronousRemote: "El email indicado ya esta siendo usado. Indique otro.",
+                    //remote: "El email indicado ya esta siendo usado. Indique otro."
+                },
+                signon_telefono : {
+                    required: "Indique su teléfono."
+                },
+                signon_fecha_nacimiento : {
+                    required: "Indique su fecha de nacimiento."
+                },
+                signon_manifiesto : {
+                    required: " Indique si acepta el manifiesto: "
+                }
+            }
+        });
+
+        $('#signon_fecha_nacimiento').datepicker({format: 'dd/mm/yyyy'});
+        Dropzone.options.signonForm = {
+            addRemoveLinks: true,
+            clickable: '#imageSelector',
+            previewsContainer: '#imageContainer',
+            //maxFiles: 5,
+            
+            
+            // The configuration we've talked about above
+            autoProcessQueue: false,
+            uploadMultiple: true,
+            parallelUploads: 100,
+            maxFiles: 100,
+
+            // The setting up of the dropzone
+            init: function() {
+                var myDropzone = this;
+
+                // First change the button to actually tell Dropzone to process the queue.
+                this.element.querySelector("button[type=submit]").addEventListener("click", function(e) {
+                    // Make sure that the form isn't actually being sent.
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    // TODO: Validate minimum and maximum pics!!
+                    if($('#signon-form').valid())
+                    {
+                        //--
+                        var size = myDropzone.files.length;
+                        for (var _i = 0; _i < size; _i++) {
+                            if(myDropzone.files[_i].status === Dropzone.SUCCESS) {
+                                myDropzone.files[_i].status = Dropzone.QUEUED;
+                            }
+                        }
+                        myDropzone.processQueue();
+                    }
+                });
+
+                this.on("addedfile", function() {
+                    // Show submit button here and/or inform user to click it.
+                    $('button[type=submit]').removeClass('disabled');
+                });
+                
+                // Listen to the sendingmultiple event. In this case, it's the sendingmultiple event instead
+                // of the sending event because uploadMultiple is set to true.
+                this.on("sendingmultiple", function() {
+                    // Gets triggered when the form is actually being sent.
+                    // Hide the success button or the complete form.
+                    $('button[type=submit]').hide();
+                });
+                this.on("successmultiple", function(files, response) {
+                    // Gets triggered when the files have successfully been sent.
+                    // Redirect user or notify of success.
+                    //window.location = "index.php";
+                    $('button[type=submit]').show();
+                    $('.form-main').append('<p class="full-error">Se han enviado los datos correctamente.</p>');
+                });
+                this.on("errormultiple", function(files, response) {
+                    // Gets triggered when there was an error sending the files.
+                    // Maybe show form again, and notify user of error
+                    $('button[type=submit]').show();
+                    $('.form-main').append('<p class="full-error">Se ha producido un error.</p>');
+                });
+            }
+            
+            
+        };
+	});
+</script>
+{% endblock %}
+
+
+{% block main_container %}
+	<div class="row">
+		<div class="col-xs-12">
+			<h1 class="center">Inscripción como votante</h1>
+		</div>
+	</div>
+
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    Formulario de inscripción para participar como votante en las primarias abiertas a la ciudadanía para conformar la lista electoral para el ayuntamiento de alicante de Guanyem Alacant.<br />
+                    <br />
+                    (La dirección facilitada debe corresponderse con la que figure en el DNI adjuntado o, en su defecto, en el certificado de empadronamiento presentado, debiendo pertenecer al término municipal de Alicante)
+                </div>
+            </div>
+        </div>
+    </div>
+
+	<div class="row">
+		<div class="col-xs-12">
+            
+            {% if msg %}
+            <div>
+                <p>{{ msg }}</p>
+            </div>
+            {% endif%}
+            
+            <div class="form-main">
+                <form id="signon-form" class="dropzone" accept-charset="UTF-8" enctype="multipart/form-data" method="post" action="signon_register.php">
+                    <div class="form-group">
+                        <input type="text" name="signon_nombre"     id="signon_nombre"      class="form-control" placeholder="Nombre">
+                        <input type="text" name="signon_apellidos"  id="signon_apellidos"   class="form-control" placeholder="Apellidos">
+                        <input type="text" name="signon_nif"        id="signon_nif"         class="form-control" placeholder="NIF">
+                        <input type="text" name="signon_direccion"  id="signon_direccion"   class="form-control" placeholder="Dirección">
+                        <input type="text" name="signon_cp"         id="signon_cp"          class="form-control" placeholder="código postal">
+                        <input type="text" name="signon_email"      id="signon_email"       class="form-control" placeholder="email">
+                        <input type="text" name="signon_telefono"   id="signon_telefono"    class="form-control" placeholder="telefono">
+                        <input type="text" name="signon_fecha_nacimiento" id="signon_fecha_nacimiento"    class="form-control" placeholder="Fecha de nacimiento">
+                        
+                        <br />
+                        <br />
+                        <label for="signon_manifiesto" ><input type="checkbox" name="signon_manifiesto" id="signon_manifiesto"    class=""> Comparto el proyecto (manifiesto, código ético...) de Guanyem Alacant.</label>
+                        <label for="signon_newsletter" ><input type="checkbox" name="signon_newsletter" id="signon_newsletter"    class=""> Deseo recibir información sobre futuras campañas y actos de Guanyem Alacant.</label>
+                        
+                        <br />
+                        <!-- IMAGES HERE -->
+
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="panel panel-default">
+                                    <div class="panel-body">
+                                        Debe presentar un documento (nif, pasaporte, tarjeta de residencia) que acredite la identidad de la persona interesada en participar como votante en las primarias abiertas a la ciudadanía de Guanyem Alacant y, sólo en el caso de que la dirección que aparezca en el dni no pertenezca al término municipal de alicante, esta pertenencia deberá ser justificada con el certificado de empadronamiento correspondiente.<br />
+                                        <br />
+                                        Puede añadir los documentos necesarios pulsando el botón inferior, o bien arrastrando los documentos directamente a este formulario.
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <a id="imageSelector" class="btn btn-default pull-right" ><i class="fa fa-plus"></i> Seleccionar documento</a>
+                        <div id="imageContainer" class="row dropzone-previews" >&nbsp;<div class="dz-message"></div></div>
+
+                    </div>
+                    <button id="button_login" type="submit" class="btn btn-block signin disabled">Inscribirse</button>
+                </form>
+            </div>
+            <div class="form-footer">
+                <div class="row">
+                    <div class="col-xs-7">
+                        <a href="index.php"><i class="fa fa-arrow-left circled-icon"></i> Volver</a>
+                    </div>
+                </div>
+            </div>
+            
+		</div>
+	</div>
+
+    <div class="row">
+        &nbsp;
+    </div>
+
+
+
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <p>En la dirección de correo electrónico facilitada recibirás toda la información sobre las primarias.</p>
+                    <p>En virtud de lo establecido en la Ley Orgánica 15/1999, de 13 de diciembre, de Protección de Datos de Carácter Personal, le informamos de que sus datos serán usados únicamente para el proceso de primarias abiertas a la ciudadanía de Guanyem Alacant y que sólo recibirá más información de este proyecto político si ha marcado la casilla correspondiente.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+

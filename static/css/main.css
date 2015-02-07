@@ -212,7 +212,10 @@ text-align: center;
   border-radius: 50%;
   background-color: #c4787b;
   padding: 8px;
-  margin-right: 7px;
+  margin-right: 5px;
+  width: 28px;
+  height: 28px;
+  text-align: center;
 }
 .signin {
   padding-top: 10px;
@@ -434,4 +437,34 @@ nav a:hover, nav a:focus {
 {
     background-color: #90c090;
     font-weight: bolder;
+}
+.vote_selected:hover
+{
+    background-color: #90c090 !important;
+}
+.candidate_img
+{
+    border-radius: 50%;
+    border: 2px solid #c62831;
+}
+.remark
+{
+    background-color: #c62831;
+    color: #fff;
+    border-radius: 4px;
+    padding: 5px;
+    min-width: 40px;
+    display: inline-block;
+    text-align: center;
+}
+
+div.center
+{
+    text-align: center;
+}
+label {
+    color: #fff;
+}
+label.error {
+    color: #fcc;
 }

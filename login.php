@@ -17,6 +17,4 @@ $datos = array('voteExpired' => $voteExpired,
 $template = $twig->loadTemplate('login.html');
 echo $template->render($datos);
 
-
-var_dump($_SESSION);
 ?>

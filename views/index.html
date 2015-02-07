@@ -37,7 +37,7 @@
                 {
                     $(".vote-option-" + content).removeClass("disabled");
                     elem.removeClass("vote_selected");
-                    elem.parents(".media-body").find(".vote-asigned").html("");
+                    elem.parents(".media-body").find(".vote-asigned").removeClass("remark").html("");
                 }
                 else
                 {
@@ -45,13 +45,15 @@
                     $(".vote-option-" + content).addClass("disabled");
                     elem.removeClass("disabled");
                     elem.addClass("vote_selected");
-                    elem.parents(".media-body").find(".vote-asigned").html(content);
+                    elem.parents(".media-body").find(".vote-asigned").addClass("remark").html(content);
                 }
+                elem.blur();
             }
         });
         
         //--
         //$(".vote-panel").hide();
+        $(".dropdown-toggle").hide();
 	});
 </script>
 
@@ -68,17 +70,13 @@
                 {% for candidate in candidates %}
                 <li class="list-group-item candidateItem">
                     <div class="media">
-                        <div class="media-left media-middle"><a href="{{candidate.url_detalle}}" alt="Abrir perfil del candidato" target="_blank"><img class="media-object" src="{{candidate.url_foto}}" /></a></div>
+                        <div class="media-left media-middle"><a href="{{candidate.url_detalle}}" alt="Abrir perfil del candidato" target="_blank"><img class="media-object candidate_img" src="{{candidate.url_foto}}" /></a></div>
                         <div class="media-body">
-                            <h4 class="media-heading"><span class="vote-asigned"></span> {{candidate.nombre}} <a href="{{candidate.url_detalle}}" alt="Abrir perfil del candidato" target="_blank"><i class="fa fa-arrow-right"></i></a></h4>
+                            <h4><span class="vote-asigned"></span> <a href="{{candidate.url_detalle}}" alt="Abrir perfil del candidato" target="_blank">{{candidate.nombre}} <i class="fa fa-arrow-right"></i></a></h4>
                             <p>{{candidate.descripcion | raw}}</p>
 
-                            <div class="btn-toolbar" role="toolbar" aria-label="vote">
-                                <button class="btn btn-default dropdown-toggle vote-panel-dropdown pull-right" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true">
-                                    Votar
-                                    <span class="caret"></span>
-                                </button>
-                                <div id="vote-panel-{{candidate.id}}" class="btn-group pull-right vote-panel" role="group" aria-label="votation-group">
+                            <div class="btn-toolbar pull-right" role="toolbar" aria-label="vote">
+                                <div id="vote-panel-{{candidate.id}}" class="btn-group vote-panel" role="group" aria-label="votation-group">
                                     <button type="button" class="btn btn-default vote-option vote-option-1 ">1</button>
                                     <button type="button" class="btn btn-default vote-option vote-option-2 ">2</button>
                                     <button type="button" class="btn btn-default vote-option vote-option-3 ">3</button>
