@@ -138,20 +138,33 @@
                 }
             }
         });
-
+        
+        function shakeForm(elem, amplitude, freq) {
+            var l = amplitude;  
+            for( var i = 0; i < 10; i++ )   
+                elem.animate( { 'margin-left': "+=" + ( l = -l ) + 'px' }, freq);  
+        }
+        
+        $('#msg_error').hide();
+        $('#msg_success').hide();
         $('#signon_fecha_nacimiento').datepicker({format: 'dd/mm/yyyy'});
         Dropzone.options.signonForm = {
             addRemoveLinks: true,
             clickable: '#imageSelector',
             previewsContainer: '#imageContainer',
-            //maxFiles: 5,
             
+            dictInvalidFileType: 'El tipo de fichero es inválido.',
+            dictFileTooBig: 'El fichero que intenta enviar ocupa demasiado',
+            dictRemoveFile: 'Borrar',
+            dictCancelUpload: 'Cancelar el envío',
+            dictCancelUploadConfirmation: '¿Esta seguro/a de querer eliminar el fichero?',
+            dictMaxFilesExceeded: 'Ha superado el número máximo de ficheros que se pueden enviar.',
             
             // The configuration we've talked about above
             autoProcessQueue: false,
             uploadMultiple: true,
-            parallelUploads: 100,
-            maxFiles: 100,
+            parallelUploads: 5,
+            maxFiles: 5,
 
             // The setting up of the dropzone
             init: function() {
@@ -175,6 +188,22 @@
                         }
                         myDropzone.processQueue();
                     }
+                    else
+                    {
+                        var errors = '';
+                        $('label.error').each(function(i, elem){
+                            if($(elem).html().length > 0)
+                                errors += '<li>' + $(elem).html() + '</li>';
+                        });
+                        if(errors.length > 0)
+                        {
+                            errors = '<br /><ul>'+errors+'</ul>';
+                        }
+                        
+                        shakeForm($('button[type=submit]'), 20, 50);
+                        $('#msg_success').hide();
+                        $('#msg_error').hide().html('Formulario incompleto.'+errors).show('slow').delay(2500).hide('slow');
+                    }
                 });
 
                 this.on("addedfile", function() {
@@ -188,6 +217,8 @@
                     // Gets triggered when the form is actually being sent.
                     // Hide the success button or the complete form.
                     $('button[type=submit]').hide();
+                    $('#msg_error').hide();
+                    $('#msg_success').hide();
                 });
                 this.on("successmultiple", function(files, response) {
                     // Gets triggered when the files have successfully been sent.
@@ -195,12 +226,16 @@
                     //window.location = "index.php";
                     $('button[type=submit]').show();
                     $('.form-main').append('<p class="full-error">Se han enviado los datos correctamente.</p>');
+                    $('#msg_error').hide();
+                    $('#msg_success').hide().html('Sus datos se han enviado correctamente').show('slow').delay(2500).hide('slow');
                 });
                 this.on("errormultiple", function(files, response) {
                     // Gets triggered when there was an error sending the files.
                     // Maybe show form again, and notify user of error
                     $('button[type=submit]').show();
-                    $('.form-main').append('<p class="full-error">Se ha producido un error.</p>');
+                    $('#msg_success').hide();
+                    $('#msg_error').hide().html('Error: '+response).show('slow').delay(2500).hide('slow');
+
                 });
             }
             
@@ -277,6 +312,8 @@
 
                     </div>
                     <button id="button_login" type="submit" class="btn btn-block signin disabled">Inscribirse</button>
+                    <div id="msg_success" class="alert alert-success" role="alert"></div>
+                    <div id="msg_error" class="alert alert-danger" role="alert"></div>
                 </form>
             </div>
             <div class="form-footer">
