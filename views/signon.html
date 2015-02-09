@@ -134,7 +134,7 @@
                     required: "Indique su fecha de nacimiento."
                 },
                 signon_manifiesto : {
-                    required: " Indique si acepta el manifiesto: "
+                    required: " Indique que acepta el manifiesto. "
                 }
             }
         });
@@ -177,7 +177,7 @@
                     e.stopPropagation();
                     
                     // TODO: Validate minimum and maximum pics!!
-                    if($('#signon-form').valid())
+                    if($('#signon-form').valid() && myDropzone.files.length > 0)
                     {
                         //--
                         var size = myDropzone.files.length;
@@ -195,6 +195,10 @@
                             if($(elem).html().length > 0)
                                 errors += '<li>' + $(elem).html() + '</li>';
                         });
+                        if(myDropzone.files.length === 0)
+                        {
+                            errors += '<li>Necesita enviar al menos un documento.</li>';
+                        }
                         if(errors.length > 0)
                         {
                             errors = '<br /><ul>'+errors+'</ul>';

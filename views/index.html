@@ -6,23 +6,24 @@
 <script>
 	$(document).ready(function() {
         //--
-        $(".vote-panel-dropdown").click(function(e){
-            e.preventDefault();
-            var visible = $(this).siblings(".vote-panel").is(":visible");
-            if(visible)
-            {
-                $(this).siblings(".vote-panel").hide("slow");
-            }
-            else
-            {
-                $(".vote-panel").hide("slow");
-                $(this).siblings(".vote-panel").show("slow");
-            }
-        });
+//        $(".vote-panel-dropdown").click(function(e){
+//            e.preventDefault();
+//            var visible = $(this).siblings(".vote-panel").is(":visible");
+//            if(visible)
+//            {
+//                $(this).siblings(".vote-panel").hide("slow");
+//            }
+//            else
+//            {
+//                $(".vote-panel").hide("slow");
+//                $(this).siblings(".vote-panel").show("slow");
+//            }
+//        });
         
         //--
         $(".vote-option").click(function(e){
             e.preventDefault();
+            
             
             $(this).siblings(".vote_selected").each(function(n, elem){
                 changeVoteSelected($(elem));
@@ -30,35 +31,71 @@
             
             changeVoteSelected($(this));
             
+            
+            //--
             function changeVoteSelected(elem)
             {
-                var content = elem.html();
+                var voteId = elem.html();
+                var imagSrc = "static/images/icon-user-default.png";
                 if(elem.hasClass("vote_selected"))
                 {
-                    $(".vote-option-" + content).removeClass("disabled");
+                    $(".vote-option-" + voteId).removeClass("disabled");
                     elem.removeClass("vote_selected");
                     elem.parents(".media-body").find(".vote-asigned").removeClass("remark").html("");
                 }
                 else
                 {
-                    $(".vote-option-" + content).removeClass("vote_selected");
-                    $(".vote-option-" + content).addClass("disabled");
+                    $(".vote-option-" + voteId).removeClass("vote_selected");
+                    $(".vote-option-" + voteId).addClass("disabled");
                     elem.removeClass("disabled");
                     elem.addClass("vote_selected");
-                    elem.parents(".media-body").find(".vote-asigned").addClass("remark").html(content);
+                    elem.parents(".media-body").find(".vote-asigned").addClass("remark").html(voteId);
+                    
+                    
+                    var candidateId = elem.parent().attr("id");
+                    candidateId = candidateId.split('-')[2];
+                    if(typeof candidateId === 'undefined' || !candidateId)
+                    {
+                        console.log('Se ha producido un error al votar al candidato.');
+                        return;
+                    }
+                    imagSrc = $("img#candidate-image-"+candidateId).attr('src');
                 }
+
+                //--
+                $("li#candidate-item-" + voteId + " span img.candidate_img").attr('src', imagSrc);
+                
                 elem.blur();
             }
         });
         
         //--
         //$(".vote-panel").hide();
-        $(".dropdown-toggle").hide();
+        //$(".dropdown-toggle").hide();
 	});
 </script>
-
 {% endblock %}
 
+
+{% block candidate_list %}
+{%if candidates %}
+	<div class="row candidate">
+		<div class="col-xs-12 hidden-sm candidate-selected-container">
+            <ul class="candidate-selected-list">
+                <li class="candidate-selected-placeholder" id="candidate-item-1"><span><div>1</div><img class="candidate_img" src="static/images/icon-user-default.png" /></span></li>
+                <li class="candidate-selected-placeholder" id="candidate-item-2"><span><div>2</div><img class="candidate_img" src="static/images/icon-user-default.png" /></span></li>
+                <li class="candidate-selected-placeholder" id="candidate-item-3"><span><div>3</div><img class="candidate_img" src="static/images/icon-user-default.png" /></span></li>
+                <li class="candidate-selected-placeholder" id="candidate-item-4"><span><div>4</div><img class="candidate_img" src="static/images/icon-user-default.png" /></span></li>
+                <li class="candidate-selected-placeholder" id="candidate-item-5"><span><div>5</div><img class="candidate_img" src="static/images/icon-user-default.png" /></span></li>
+                <li class="candidate-selected-placeholder" id="candidate-item-6"><span><div>6</div><img class="candidate_img" src="static/images/icon-user-default.png" /></span></li>
+                <li class="candidate-selected-placeholder" id="candidate-item-7"><span><div>7</div><img class="candidate_img" src="static/images/icon-user-default.png" /></span></li>
+                <li class="candidate-selected-placeholder" id="candidate-item-8"><span><div>8</div><img class="candidate_img" src="static/images/icon-user-default.png" /></span></li>
+                <li class="candidate-selected-placeholder" id="candidate-item-9"><span><div>9</div><img class="candidate_img" src="static/images/icon-user-default.png" /></span></li>
+            </ul>
+        </div>
+    </div>
+{% endif %}
+{% endblock %}
 
 {% block main_container %}
 	<div class="row">
@@ -70,7 +107,7 @@
                 {% for candidate in candidates %}
                 <li class="list-group-item candidateItem">
                     <div class="media">
-                        <div class="media-left media-middle"><a href="{{candidate.url_detalle}}" alt="Abrir perfil del candidato" target="_blank"><img class="media-object candidate_img" src="{{candidate.url_foto}}" /></a></div>
+                        <div class="media-left media-middle"><a href="{{candidate.url_detalle}}" alt="Abrir perfil del candidato" target="_blank"><img id="candidate-image-{{candidate.id}}" class="media-object candidate_img" src="{{candidate.url_foto}}" /></a></div>
                         <div class="media-body">
                             <h4><span class="vote-asigned"></span> <a href="{{candidate.url_detalle}}" alt="Abrir perfil del candidato" target="_blank">{{candidate.nombre}} <i class="fa fa-arrow-right"></i></a></h4>
                             <p>{{candidate.descripcion | raw}}</p>

@@ -54,7 +54,7 @@
 <header class="app-header">
 <div id="header-container">
 	<h1 id="logo"><a href="index.php"><img src="static/images/logo.png" width="140px" height="45px" class="img-responsive " alt="logo {% include 'texto_ganemos.html' %}"></a></h1>
-
+    {% block candidate_list %}{% endblock %}
 	<div class="user-nav">
 		{% if user %}
         <a href="logout.php" class="login pull-right anonymous-citizen"><span>Desconectar</span></a>
