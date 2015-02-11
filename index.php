@@ -1,7 +1,7 @@
 <?php
 include_once "lib/functions.php";
 
-$canVote     = true;
+$canVote     = false;
 $voteExpired = false;
 
 

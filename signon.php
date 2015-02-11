@@ -7,14 +7,14 @@ if(IsLogged() == true)
     die();
 }
 
-if(isset($_POST) && count($_POST) > 0)
-{
-    echo "<pre>";
-    var_dump($_POST);
-    var_dump($_FILES);
-    echo "</pre>";
-    //die();
-}
+//if(isset($_POST) && count($_POST) > 0)
+//{
+//    echo "<pre>";
+//    var_dump($_POST);
+//    var_dump($_FILES);
+//    echo "</pre>";
+//    //die();
+//}
 
 $template = $twig->loadTemplate('signon.html');
 echo $template->render(array());

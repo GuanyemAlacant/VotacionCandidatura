@@ -18,7 +18,7 @@ if(isset($_POST["nif_login"]))
         $user   = FALSE;
         $data   = array($nif);
         $result = $conn->prepare("SELECT * FROM cnd_users WHERE nif=?");
-		$result->execute($data);
+        $result->execute($data);
         if($result->rowCount() == 1)
         {
             $user = $result->fetch(PDO::FETCH_ASSOC);
@@ -63,8 +63,12 @@ if(isset($_POST["nif_login"]))
 
     $template = $twig->loadTemplate('message.html');
     echo $template->render($datos);
+    die();
+}
+else
+{
+    header('Location:index.php');
+    die();
 }
 
-header('Location:index.php');
-die();
 ?>

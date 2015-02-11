@@ -9,14 +9,14 @@ if(isset($_GET["hash"]))
         
         // step0: remove expired temporal hashes
         $result = $conn->prepare("DELETE FROM cnd_newpass WHERE creation < DATE_SUB(NOW(), INTERVAL 1 DAY);");
-		$result->execute();
+        $result->execute();
         
         // step1: check hash exists
         $user     = FALSE;
         $hash     = $_GET["hash"];
         $data     = array('hash' => $hash);
         $result   = $conn->prepare("SELECT * FROM cnd_newpass WHERE hash=:hash;");
-		$result->execute($data);
+        $result->execute($data);
         if($result->rowCount() == 1)
         {
             $user = $result->fetch(PDO::FETCH_ASSOC);
@@ -45,7 +45,7 @@ if(isset($_GET["hash"]))
             
             // step5: Send an email
             $data = GetUserDataById($user_id);
-            SendEmail_AlertPassSet($data['email'], $pass." - ".$hash);
+            SendEmail_AlertPassSet($data['email'], $pass); //." - ".$hash);
         }
         else
         {

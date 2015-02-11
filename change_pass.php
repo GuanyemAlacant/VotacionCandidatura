@@ -14,17 +14,17 @@ if(isset($_POST["nif_login"]) && isset($_POST["old_pass_login"]) && isset($_POST
 	
 	try
 	{
-		$conn   = getBBDD();
+        $conn   = getBBDD();
         
         
-		$user   = array(
-			'nif' => $nif
-		);
+        $userData   = array(
+            'nif' => $nif
+        );
         
         // step1: check exists
         $user     = FALSE; 
         $result   = $conn->prepare("SELECT * FROM cnd_users WHERE nif=:nif");
-		$result->execute($user);
+        $result->execute($userData);
         if($result->rowCount() == 1)
         {
             $user = $result->fetch(PDO::FETCH_ASSOC);
@@ -32,16 +32,16 @@ if(isset($_POST["nif_login"]) && isset($_POST["old_pass_login"]) && isset($_POST
 
         if($user !== FALSE && $hasher->CheckPassword($old_pass, $user['password']))
         {
-            $user   = array(
+            $userData   = array(
                 'nif' => $nif,
                 'new_pass' => $new_hash
             );
             $result = $conn->prepare("UPDATE cnd_users SET password=:new_pass WHERE nif=:nif;");
-            $result->execute($user);
+            $result->execute($userData);
             
             // TODO: Check update count
 
-            SendEmail_AlertPassChanged($user['email']);
+            SendEmail_AlertPassChanged($user['email'], null);
         }
         else
         {

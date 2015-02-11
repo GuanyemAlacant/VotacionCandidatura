@@ -263,10 +263,10 @@ function SendEmail_AlertPassChanged($mail, $nif)
     <p>Si usted no ha realizado este cambio, pongase en contacto con nosotros para solucionar su incidencia.</p>
     <p>Si ha realizado el cambio usted mismo puede borrar este mensaje.</p>
     <p></p>
-    <p>email: info@guanyemalacant.org</p>
+    <p>email: candidaturaguanyem@gmail.com</p>
     <p>web: http://www.guanyemalacant.org</p>
     </body> 
-    </html>'; 
+    </html>';
 
     SendMailHTML($mail, $subject, $body);
 }
@@ -302,7 +302,7 @@ function SendEmail_ComfirmPassSet($mail, $nif, $hash)
     <h1>Restablecer contraseña en el portal de votación de candidaturas.</h1> 
     <p>Nuestro sistema ha recibido una petición para restablecer la contraseña vinculada al NIF: '.$nif.' </p>
     <p>Si desea que el sistema genere una nueva contraseña siga el siguiente enlace o copielo en un navegador:</p>
-    <p><a>'.$url.'</a></p>
+    <p><a href="'.$url.'" target="_blank">'.$url.'</a></p>
     <p>Este enlace tiene una validez de 24 horas.</p>
     <p></p>
     <p>Si usted no ha iniciado esta solicitud, puede ignorar este mensaje de forma segura.</p>
