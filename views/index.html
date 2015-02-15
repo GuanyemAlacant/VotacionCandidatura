@@ -5,20 +5,45 @@
 {% block scripts %}
 <script>
 	$(document).ready(function() {
+        
         //--
-//        $(".vote-panel-dropdown").click(function(e){
-//            e.preventDefault();
-//            var visible = $(this).siblings(".vote-panel").is(":visible");
-//            if(visible)
-//            {
-//                $(this).siblings(".vote-panel").hide("slow");
-//            }
-//            else
-//            {
-//                $(".vote-panel").hide("slow");
-//                $(this).siblings(".vote-panel").show("slow");
-//            }
-//        });
+        $(".vote-first").click(function(e){
+            e.preventDefault();
+            
+            changeFirstVoteSelected($(this));
+            
+            //--
+            function changeFirstVoteSelected(elem)
+            {
+                var candidateId;
+                
+                candidateId = elem.attr('id');
+                candidateId = candidateId.split('-')[1];
+                
+                var imagSrc = "static/images/icon-user-default.png";
+                if(elem.hasClass("vote_selected"))
+                {
+                    $(".vote-first").removeClass("disabled");
+                    elem.removeClass("vote_selected");
+                    candidateId = 0;
+                }
+                else
+                {
+                    $(".vote-first").removeClass("vote_selected");
+                    $(".vote-first").addClass("disabled");
+                    elem.removeClass("disabled");
+                    elem.addClass("vote_selected");
+
+                    imagSrc = $("img#candidate-image-"+candidateId).attr('src');
+                }
+
+                //--
+                $("li#first-candidate-item span img.candidate_img").attr('src', imagSrc);
+                $("li#first-candidate-item span img.candidate_img").attr('candidate', candidateId);
+                
+                elem.blur();
+            }
+        });
         
         //--
         $(".vote-option").click(function(e){
@@ -35,13 +60,22 @@
             //--
             function changeVoteSelected(elem)
             {
-                var voteId = elem.html();
+                var voteId;
+                var candidateId;
+                
+                voteId      = elem.attr('id');
+                candidateId = voteId.split('_')[0];
+                voteId      = voteId.split('_')[1];
+                candidateId = candidateId.split('-')[1];
+                voteId      = voteId.split('-')[1];
+                
                 var imagSrc = "static/images/icon-user-default.png";
                 if(elem.hasClass("vote_selected"))
                 {
                     $(".vote-option-" + voteId).removeClass("disabled");
                     elem.removeClass("vote_selected");
                     elem.parents(".media-body").find(".vote-asigned").removeClass("remark").html("");
+                    candidateId = 0;
                 }
                 else
                 {
@@ -49,29 +83,35 @@
                     $(".vote-option-" + voteId).addClass("disabled");
                     elem.removeClass("disabled");
                     elem.addClass("vote_selected");
-                    elem.parents(".media-body").find(".vote-asigned").addClass("remark").html(voteId);
+                    elem.parents(".media-body").find(".vote-asigned").addClass("remark").html(elem.html());
                     
-                    
-                    var candidateId = elem.parent().attr("id");
-                    candidateId = candidateId.split('-')[2];
-                    if(typeof candidateId === 'undefined' || !candidateId)
-                    {
-                        console.log('Se ha producido un error al votar al candidato.');
-                        return;
-                    }
                     imagSrc = $("img#candidate-image-"+candidateId).attr('src');
                 }
 
                 //--
                 $("li#candidate-item-" + voteId + " span img.candidate_img").attr('src', imagSrc);
+                $("li#candidate-item-" + voteId + " span img.candidate_img").attr('candidate', candidateId);
                 
                 elem.blur();
             }
         });
         
-        //--
-        //$(".vote-panel").hide();
-        //$(".dropdown-toggle").hide();
+
+        $("img.candidate_img").click(function(e){
+            e.preventDefault();
+            
+            var candidateId = parseInt($(this).attr('candidate'), 10);
+            if(candidateId > 0)
+            {
+                var block = $("#candidate-block-"+candidateId);
+                if(block)
+                {
+                    $('html, body').animate({
+                        scrollTop: block.offset().top - 80
+                    });
+                }
+            }
+        });
 	});
 </script>
 {% endblock %}
@@ -82,15 +122,10 @@
 	<div class="row candidate">
 		<div class="col-xs-12 hidden-sm candidate-selected-container">
             <ul class="candidate-selected-list">
-                <li class="candidate-selected-placeholder" id="candidate-item-1"><span><div>1</div><img class="candidate_img" src="static/images/icon-user-default.png" /></span></li>
-                <li class="candidate-selected-placeholder" id="candidate-item-2"><span><div>2</div><img class="candidate_img" src="static/images/icon-user-default.png" /></span></li>
-                <li class="candidate-selected-placeholder" id="candidate-item-3"><span><div>3</div><img class="candidate_img" src="static/images/icon-user-default.png" /></span></li>
-                <li class="candidate-selected-placeholder" id="candidate-item-4"><span><div>4</div><img class="candidate_img" src="static/images/icon-user-default.png" /></span></li>
-                <li class="candidate-selected-placeholder" id="candidate-item-5"><span><div>5</div><img class="candidate_img" src="static/images/icon-user-default.png" /></span></li>
-                <li class="candidate-selected-placeholder" id="candidate-item-6"><span><div>6</div><img class="candidate_img" src="static/images/icon-user-default.png" /></span></li>
-                <li class="candidate-selected-placeholder" id="candidate-item-7"><span><div>7</div><img class="candidate_img" src="static/images/icon-user-default.png" /></span></li>
-                <li class="candidate-selected-placeholder" id="candidate-item-8"><span><div>8</div><img class="candidate_img" src="static/images/icon-user-default.png" /></span></li>
-                <li class="candidate-selected-placeholder" id="candidate-item-9"><span><div>9</div><img class="candidate_img" src="static/images/icon-user-default.png" /></span></li>
+                <li class="candidate-selected-placeholder" id="first-candidate-item"><span><div></div><img class="candidate_img" src="static/images/icon-user-default.png" /></span></li>
+                {% for i in 1..8 %}
+                <li class="candidate-selected-placeholder" id="candidate-item-{{i}}"><span><div>1/{{i}}</div><img class="candidate_img" src="static/images/icon-user-default.png" /></span></li>
+                {% endfor %}
             </ul>
         </div>
     </div>
@@ -105,7 +140,7 @@
             {%if candidates %}
             <ul class="list-group candidateGroup">
                 {% for candidate in candidates %}
-                <li class="list-group-item candidateItem">
+                <li class="list-group-item candidateItem" id="candidate-block-{{candidate.id}}">
                     <div class="media">
                         <div class="media-left media-middle"><a href="{{candidate.url_detalle}}" alt="Abrir perfil del candidato" target="_blank"><img id="candidate-image-{{candidate.id}}" class="media-object candidate_img" src="{{candidate.url_foto}}" /></a></div>
                         <div class="media-body">
@@ -113,17 +148,16 @@
                             <p>{{candidate.descripcion | raw}}</p>
 
                             <div class="btn-toolbar pull-right" role="toolbar" aria-label="vote">
+                                <button type="button" id="cl-{{candidate.id}}" class="btn btn-primary vote-first pull-left">Cabeza</button>
                                 <div id="vote-panel-{{candidate.id}}" class="btn-group vote-panel" role="group" aria-label="votation-group">
-                                    <button type="button" class="btn btn-default vote-option vote-option-1 ">1</button>
-                                    <button type="button" class="btn btn-default vote-option vote-option-2 ">2</button>
-                                    <button type="button" class="btn btn-default vote-option vote-option-3 ">3</button>
-                                    <button type="button" class="btn btn-default vote-option vote-option-4 ">4</button>
-                                    <button type="button" class="btn btn-default vote-option vote-option-5 ">5</button>
-                                    <button type="button" class="btn btn-default vote-option vote-option-6 ">6</button>
-                                    <button type="button" class="btn btn-default vote-option vote-option-7 ">7</button>
-                                    <button type="button" class="btn btn-default vote-option vote-option-8 ">8</button>
-                                    <button type="button" class="btn btn-default vote-option vote-option-9 ">9</button>
-                                    <button type="button" class="btn btn-default vote-option vote-option-10 ">10</button>
+                                    <button type="button" id="c-{{candidate.id}}_o-1" class="btn btn-default vote-option vote-option-1 ">1</button>
+                                    <button type="button" id="c-{{candidate.id}}_o-2" class="btn btn-default vote-option vote-option-2 ">1/2</button>
+                                    <button type="button" id="c-{{candidate.id}}_o-3" class="btn btn-default vote-option vote-option-3 ">1/3</button>
+                                    <button type="button" id="c-{{candidate.id}}_o-4" class="btn btn-default vote-option vote-option-4 ">1/4</button>
+                                    <button type="button" id="c-{{candidate.id}}_o-5" class="btn btn-default vote-option vote-option-5 ">1/5</button>
+                                    <button type="button" id="c-{{candidate.id}}_o-6" class="btn btn-default vote-option vote-option-6 ">1/6</button>
+                                    <button type="button" id="c-{{candidate.id}}_o-7" class="btn btn-default vote-option vote-option-7 ">1/7</button>
+                                    <button type="button" id="c-{{candidate.id}}_o-8" class="btn btn-default vote-option vote-option-8 ">1/8</button>
                                 </div>
                             </div>
                         </div>

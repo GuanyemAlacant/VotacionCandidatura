@@ -73,6 +73,9 @@
         
         //--
         $("#signon-form").validate({
+            errorPlacement: function(error, element) {         
+                error.insertBefore(element);
+            },
             rules: {
                 signon_nombre : {
                     required: true
@@ -89,12 +92,12 @@
                 signon_cp : {
                     required: true
                 },
-                signon_email : {
-                    //remote: "lib/validate_email_db.php",
-                    synchronousRemote: "lib/validate_email_db.php",
-                    required: true,
-                    email: true
-                },
+//                signon_email : {
+//                    //remote: "lib/validate_email_db.php",
+//                    synchronousRemote: "lib/validate_email_db.php",
+//                    //required: true,
+//                    email: true
+//                },
                 signon_telefono : {
                     required: true
                 },
@@ -249,7 +252,13 @@
                 });
             }
         };
+
+
+        $("#signon-form-content").removeAttr('style');
+        $("#js-error").hide();
 	});
+    
+
 </script>
 {% endblock %}
 
@@ -282,7 +291,7 @@
             </div>
             {% endif%}
             
-            <div class="form-main">
+            <div class="form-main" id="signon-form-content" style="display:none">
                 <form id="signon-form" class="dropzone" accept-charset="UTF-8" enctype="multipart/form-data" method="post" action="signon_register.php">
                     <div class="form-group">
                         <input type="text" name="signon_nombre"     id="signon_nombre"      class="form-control" placeholder="Nombre">
@@ -296,7 +305,7 @@
                         
                         <br />
                         <br />
-                        <label for="signon_manifiesto" ><input type="checkbox" name="signon_manifiesto" id="signon_manifiesto"    class=""> Comparto el proyecto (manifiesto, código ético...) de Guanyem Alacant.</label>
+                        <label for="signon_manifiesto" ><input type="checkbox" name="signon_manifiesto" id="signon_manifiesto"    class="" checked="checked"> Comparto el proyecto (manifiesto, código ético...) de Guanyem Alacant.</label>
                         <label for="signon_newsletter" ><input type="checkbox" name="signon_newsletter" id="signon_newsletter"    class=""> Deseo recibir información sobre futuras campañas y actos de Guanyem Alacant.</label>
                         
                         <br />
@@ -324,6 +333,7 @@
                     <div id="msg_error" class="alert alert-danger" role="alert"></div>
                 </form>
             </div>
+            <h1 id="js-error"><noscript>Necesita un navegador que soporte javascript para poder enviar los datos de forma telemática.</noscript></h1>
             <div class="form-footer">
                 <div class="row">
                     <div class="col-xs-7">

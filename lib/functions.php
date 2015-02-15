@@ -292,6 +292,26 @@ function SendEmail_AlertPassSet($mail, $pass)
 }
 
 //-------------------------------------
+function SendEmail_AlertPassGenerated($mail, $pass)
+{
+    $url     = 'http://candidaturas.guanyemalacant.net/change.php';
+    $subject = "Contraseña generada";
+    $body    = '<html> 
+    <body> 
+    
+    <h1>Se han registrado sus datos en el portal de votación de candidaturas</h1> 
+    <p>El sistema ha genrerado la siguiente clave de acceso vinculada a su nif:</p>
+    <p>'.$pass.'</p>
+    <p>Le recomendamos que cambie esta contraseña por una de su elección lo antes posible.<br />
+    <a href="'.$url.'">Puede hacerlo aquí.</a></p>
+    <p></p>
+    </body> 
+    </html>'; 
+
+    SendMailHTML($mail, $subject, $body);
+}
+
+//-------------------------------------
 function SendEmail_ComfirmPassSet($mail, $nif, $hash)
 {
     $url     = $_SERVER['HTTP_HOST'].'/reset_pass.php?hash='.$hash;

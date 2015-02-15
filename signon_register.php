@@ -39,7 +39,7 @@ if(isset($_POST) && count($_POST) > 0)
     $body .= "</pre>";
     
     
-    $num = SendMailMultiAttach("candidaturaguanyem@gmail.com", "Inscripcion", $body, $_FILES["file"]["tmp_name"], $_FILES["file"]["name"], "candidaturaguanyem@gmail.com");
+    $num = SendMailMultiAttach("candidaturaguanyem@gmail.com", "Inscripción votante", $body, $_FILES["file"]["tmp_name"], $_FILES["file"]["name"], $_POST["signon_email"]);
     
     if($num > 0)
     {
