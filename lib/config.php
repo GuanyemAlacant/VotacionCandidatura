@@ -21,6 +21,16 @@ function getBBDD()
 }
 
 //--
+function getCaptchaValidationURL($data)
+{
+    $captchaSecret = "SECRET";
+    
+    $url = "https://www.google.com/recaptcha/api/siteverify";
+    $url = $url."?secret=".$captchaSecret."&response=".urlencode($data)."&remoteip=".$_SERVER['REMOTE_ADDR'];
+    return $url;
+}
+
+//--
 //Configuración Twig - Motor de plantillas
 //Cargador de Twig
 //Realpath nos da la ruta absoluta de ese directorio.
