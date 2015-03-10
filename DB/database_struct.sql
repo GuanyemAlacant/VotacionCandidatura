@@ -139,6 +139,6 @@ CREATE TABLE IF NOT EXISTS `cnd_votes` (
   `v6` int(11) DEFAULT NULL,
   `v7` int(11) DEFAULT NULL,
   `v8` int(11) DEFAULT NULL,
-  `data` varchar(255) NOT NULL,
+  `data` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;

@@ -704,9 +704,8 @@ function GetVoteHashData()
     $hash = NULL;
     $user = GetAuthenticated();
     
-    if($user != NULL)
+    if($user != NULL && ADD_VOTE_TRACE == TRUE)
     {
-                
         $merge = "";
         $i = 0;
         while(true)
@@ -729,16 +728,6 @@ function GetVoteHashData()
         
         if(strlen($merge) > 0)
             $hash = md5($merge);
-        
-//        echo "<pre>";
-//        echo $user['nombre'].".<br />\n";
-//        echo $user['apellidos'].".<br />\n";
-//        echo $user['direccion'].".<br />\n";
-//        echo $user['nif'].".<br />\n";
-//        echo $user['email'].".<br />\n";
-//        echo $merge.".<br />\n";
-//        echo $hash.".<br />\n";
-//        echo "</pre>";
     }
     return $hash;
 }

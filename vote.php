@@ -34,7 +34,7 @@ try
     }
 
     $hashData = GetVoteHashData();
-    if($hashData == NULL)
+    if(ADD_VOTE_TRACE == TRUE && $hashData == NULL)
     {
         throw new Exception("Se ha producido un error al generar los datos del voto.");
     }
