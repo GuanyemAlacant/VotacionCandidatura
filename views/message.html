@@ -7,7 +7,6 @@
 
 	});
 </script>
-
 {% endblock %}
 
 
@@ -15,7 +14,12 @@
 	<div class="row">
 		<div class="col-xs-12">
 			<h1 class="center">{{ title }}</h1>
-            <p>{{ msg }}</p>
+            
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <p>{{ msg | raw }}</p>
+                </div>
+            </div>
 		</div>
 	</div>
 {% endblock %}

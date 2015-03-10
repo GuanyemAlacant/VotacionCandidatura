@@ -8,69 +8,6 @@
 <script src="static/js/dropzone.js"></script>
 <script>
 	$(document).ready(function() {
-        
-        //--
-        jQuery.validator.addMethod("enough_age", function(value, element) {
-            var dateParts = value.split("/");
-            var selectedDate = new Date(dateParts[2], dateParts[1], dateParts[0]);
-            return this.optional(element) || (selectedDate < new Date(1999,3,4));
-        }, "Debe ser mayor de edad para poder participar.");
-        
-        $.validator.addMethod("synchronousRemote", function (value, element, param) {
-            if (this.optional(element)) {
-                return "dependency-mismatch";
-            }
-
-            var previous = this.previousValue(element);
-            if (!this.settings.messages[element.name]) {
-                this.settings.messages[element.name] = {};
-            }
-            previous.originalMessage = this.settings.messages[element.name].remote;
-            this.settings.messages[element.name].remote = previous.message;
-
-            param = typeof param === "string" && { url: param } || param;
-
-            if (previous.old === value) {
-                return previous.valid;
-            }
-
-            previous.old = value;
-            var validator = this;
-            this.startRequest(element);
-            var data = {};
-            data[element.name] = value;
-            var valid = "pending";
-            $.ajax($.extend(true, {
-                url: param,
-                async: false,
-                mode: "abort",
-                port: "validate" + element.name,
-                dataType: "json",
-                data: data,
-                success: function (response) {
-                    validator.settings.messages[element.name].remote = previous.originalMessage;
-                    valid = response === true || response === "true";
-                    if (valid) {
-                        var submitted = validator.formSubmitted;
-                        validator.prepareElement(element);
-                        validator.formSubmitted = submitted;
-                        validator.successList.push(element);
-                        delete validator.invalid[element.name];
-                        validator.showErrors();
-                    } else {
-                        var errors = {};
-                        var message = response || validator.defaultMessage(element, "remote");
-                        errors[element.name] = previous.message = $.isFunction(message) ? message(value) : message;
-                        validator.invalid[element.name] = true;
-                        validator.showErrors(errors);
-                    }
-                    previous.valid = valid;
-                    validator.stopRequest(element, valid);
-                }
-            }, param));
-            return valid;
-        }, "Please fix this field.");
-        
         //--
         $("#signon-form").validate({
             errorPlacement: function(error, element) {         
@@ -84,7 +21,9 @@
                     required: true
                 },
                 signon_nif : {
-                    required: true
+                    required: true,
+                    synchronousRemote: "lib/validate_nif_db.php",
+                    is_nif: true
                 },
                 signon_direccion : {
                     required: true
@@ -92,12 +31,13 @@
                 signon_cp : {
                     required: true
                 },
-//                signon_email : {
-//                    //remote: "lib/validate_email_db.php",
-//                    synchronousRemote: "lib/validate_email_db.php",
-//                    //required: true,
-//                    email: true
-//                },
+                signon_email : {
+                    //remote: "lib/validate_email_db.php",
+                    synchronousRemote: "lib/validate_email_db.php",
+                    //required: true,
+                    //email: true,
+                    is_email: true
+                },
                 signon_telefono : {
                     required: true
                 },
@@ -117,7 +57,8 @@
                     required: "Indique sus apellidos."
                 },
                 signon_nif : {
-                    required: "Indique su NIF."
+                    required: "Indique su NIF.",
+                    synchronousRemote: "El NIF indicado ya esta registrado. Si no ha recibido el email de confirmación póngase en contacto con nosotros: candidaturaguanyem@gmail.com"
                 },
                 signon_direccion : {
                     required: "Indique su dirección."
@@ -127,7 +68,7 @@
                 },
                 signon_email : {
                     required: "Indique su email.",
-                    synchronousRemote: "El email indicado ya esta siendo usado. Indique otro.",
+                    synchronousRemote: "El email indicado ya esta siendo usado. Indique otro."
                     //remote: "El email indicado ya esta siendo usado. Indique otro."
                 },
                 signon_telefono : {
@@ -141,12 +82,6 @@
                 }
             }
         });
-        
-        function shakeForm(elem, amplitude, freq) {
-            var l = amplitude;  
-            for( var i = 0; i < 10; i++ )   
-                elem.animate( { 'margin-left': "+=" + ( l = -l ) + 'px' }, freq);  
-        }
         
         $('#msg_error').hide();
         $('#msg_success').hide();
@@ -252,13 +187,7 @@
                 });
             }
         };
-
-
-        $("#signon-form-content").removeAttr('style');
-        $("#js-error").hide();
 	});
-    
-
 </script>
 {% endblock %}
 
@@ -274,9 +203,9 @@
         <div class="col-xs-12">
             <div class="panel panel-default">
                 <div class="panel-body">
-                    Formulario de inscripción para participar como votante en las primarias abiertas a la ciudadanía para conformar la lista electoral para el ayuntamiento de alicante de Guanyem Alacant.<br />
+                    Formulario de inscripción para participar como votante en las primarias abiertas a la ciudadanía para conformar la lista electoral para el ayuntamiento de {% include 'texto_municipio.html' %} de {% include 'texto_ganemos.html' %}.<br />
                     <br />
-                    (La dirección facilitada debe corresponderse con la que figure en el DNI adjuntado o, en su defecto, en el certificado de empadronamiento presentado, debiendo pertenecer al término municipal de Alicante)
+                    (La dirección facilitada debe corresponderse con la que figure en el DNI adjuntado o, en su defecto, en el certificado de empadronamiento presentado, debiendo pertenecer al término municipal de {% include 'texto_municipio.html' %})
                 </div>
             </div>
         </div>
@@ -291,7 +220,7 @@
             </div>
             {% endif%}
             
-            <div class="form-main" id="signon-form-content" style="display:none">
+            <div class="form-main" id="signon-form-content">
                 <form id="signon-form" class="dropzone" accept-charset="UTF-8" enctype="multipart/form-data" method="post" action="signon_register.php">
                     <div class="form-group">
                         <input type="text" name="signon_nombre"     id="signon_nombre"      class="form-control" placeholder="Nombre">
@@ -305,8 +234,8 @@
                         
                         <br />
                         <br />
-                        <label for="signon_manifiesto" ><input type="checkbox" name="signon_manifiesto" id="signon_manifiesto"    class="" checked="checked"> Comparto el proyecto (manifiesto, código ético...) de Guanyem Alacant.</label>
-                        <label for="signon_newsletter" ><input type="checkbox" name="signon_newsletter" id="signon_newsletter"    class=""> Deseo recibir información sobre futuras campañas y actos de Guanyem Alacant.</label>
+                        <label for="signon_manifiesto" ><input type="checkbox" name="signon_manifiesto" id="signon_manifiesto"    class="" checked="checked"> Comparto el proyecto (manifiesto, código ético...) de {% include 'texto_ganemos.html' %}.</label>
+                        <label for="signon_newsletter" ><input type="checkbox" name="signon_newsletter" id="signon_newsletter"    class=""> Deseo recibir información sobre futuras campañas y actos de {% include 'texto_ganemos.html' %}.</label>
                         
                         <br />
                         <!-- IMAGES HERE -->
@@ -314,11 +243,10 @@
                         <div class="row">
                             <div class="col-xs-12">
                                 <div class="panel panel-default">
-                                    <div class="panel-body">
-                                        Debe presentar un documento (nif, pasaporte, tarjeta de residencia) que acredite la identidad de la persona interesada en participar como votante en las primarias abiertas a la ciudadanía de Guanyem Alacant y, sólo en el caso de que la dirección que aparezca en el dni no pertenezca al término municipal de alicante, esta pertenencia deberá ser justificada con el certificado de empadronamiento correspondiente.<br />
+                                    <div class="panel-body" style="color:#000">
+                                        Debe presentar un documento (nif, pasaporte, tarjeta de residencia) que acredite la identidad de la persona interesada en participar como votante en las primarias abiertas a la ciudadanía de {% include 'texto_ganemos.html' %} y, sólo en el caso de que la dirección que aparezca en el dni no pertenezca al término municipal de {% include 'texto_municipio.html' %}, esta pertenencia deberá ser justificada con el certificado de empadronamiento correspondiente.<br />
                                         <br />
                                         Puede añadir los documentos necesarios pulsando el botón inferior, o bien arrastrando los documentos directamente a este formulario.
-
                                     </div>
                                 </div>
                             </div>
@@ -329,11 +257,11 @@
 
                     </div>
                     <button id="button_login" type="submit" class="btn btn-block signin disabled">Inscribirse</button>
+                    <p id="signon_help">Debe incluir al menos un documento para habilitar el envío del formulario.</p>
                     <div id="msg_success" class="alert alert-success" role="alert"></div>
                     <div id="msg_error" class="alert alert-danger" role="alert"></div>
                 </form>
             </div>
-            <h1 id="js-error"><noscript>Necesita un navegador que soporte javascript para poder enviar los datos de forma telemática.</noscript></h1>
             <div class="form-footer">
                 <div class="row">
                     <div class="col-xs-7">
@@ -356,7 +284,7 @@
             <div class="panel panel-default">
                 <div class="panel-body">
                     <p>En la dirección de correo electrónico facilitada recibirás toda la información sobre las primarias.</p>
-                    <p>En virtud de lo establecido en la Ley Orgánica 15/1999, de 13 de diciembre, de Protección de Datos de Carácter Personal, le informamos de que sus datos serán usados únicamente para el proceso de primarias abiertas a la ciudadanía de Guanyem Alacant y que sólo recibirá más información de este proyecto político si ha marcado la casilla correspondiente.</p>
+                    <p>En virtud de lo establecido en la Ley Orgánica 15/1999, de 13 de diciembre, de Protección de Datos de Carácter Personal, le informamos de que sus datos serán usados únicamente para el proceso de primarias abiertas a la ciudadanía de {% include 'texto_ganemos.html' %} y que sólo recibirá más información de este proyecto político si ha marcado la casilla correspondiente.</p>
                 </div>
             </div>
         </div>

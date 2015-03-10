@@ -1,0 +1,219 @@
+{% extends "base.html" %}
+
+{% block title %} Panel de control {% endblock %}
+
+{% block scripts %}
+<script>
+    
+
+	$(document).ready(function() {
+
+        //--
+        function checkBtnVoted()
+        {
+            var nif = $('#nif_check').val();
+            
+            $('#button_vote').addClass("disabled");
+            if($("#form_check").valid())
+            {
+                $('#message').html('&nbsp;');
+                $('#button_check').addClass("disabled");
+                $.ajax({
+                        url: 'lib/ajax/check_voted.php',
+                        data: {nif:nif},
+                        type: 'POST',
+                        dataType: 'json',
+                        success: function(data) {
+                            if(data && data['success'])
+                            {
+                                if(data['voted'] === false)
+                                {
+                                    showMessage("Puede proceder a votar");
+                                    $('#button_vote').removeClass("disabled");
+                                }
+                                else if(data['voted'] === true)
+                                {
+                                    showErrorMessage("El usuario no tiene permiso para votar.");
+                                }
+                            }
+                            else
+                            {
+                                if(data['unlogged'] === true)
+                                {
+                                    window.location = 'login.php';
+                                }
+                                else if(data['exists'] === false)
+                                {
+                                    showErrorMessage("El NIF indicado no existe en la base de datos.");
+                                }
+                                else if(data['error'])
+                                {
+                                    showErrorMessage("Error: "+data['error']);
+                                }
+                                else
+                                {
+                                    showErrorMessage("Se ha producido un error. Repita la comprobación.");
+                                }
+                            }
+                        },
+                        error: function (request, status, error) {
+                            showErrorMessage("Se ha producido un error en la petición: " + error);
+                        }
+                }).done(function() {
+                    $('#button_check').removeClass("disabled");
+                });
+            }
+            else
+            {
+                showErrorMessage("El nif '" + nif + "' no es correcto.");
+            }
+        }
+
+        //--
+        function btnVote()
+        {
+            var nif = $('#nif_check').val();
+            
+            if($("#form_check").valid())
+            {
+                $('#message').html('&nbsp;');
+                $('#button_vote').addClass("disabled");
+                $('#button_check').addClass("disabled");
+                $.ajax({
+                        url: 'lib/ajax/mark_voted.php',
+                        data: {nif:nif},
+                        type: 'POST',
+                        dataType: 'json',
+                        success: function(data) {
+                            if(data && data['success'])
+                            {
+                                if(data['voted'] === false)
+                                {
+                                    showErrorMessage("No se ha podido marcar el voto del usuario.");
+                                }
+                                else if(data['voted'] === true)
+                                {
+                                    showMessage("Se ha marcado la votación del usuario.");
+                                }
+                            }
+                            else
+                            {
+                                if(data['unlogged'] === true)
+                                {
+                                    window.location = 'login.php';
+                                }
+                                else if(data['exists'] === false)
+                                {
+                                    showErrorMessage("El NIF indicado no existe en la base de datos.");
+                                }
+                                else if(data['error'])
+                                {
+                                    showErrorMessage("Error: "+data['error']);
+                                }
+                                else
+                                {
+                                    showErrorMessage("Se ha producido un error. Repita la comprobación.");
+                                }
+                            }
+                        },
+                        error: function (request, status, error) {
+                            showErrorMessage("Se ha producido un error en la petición: " + error);
+                        }
+                }).done(function() {
+                    $('#button_check').removeClass("disabled");
+                });
+            }
+            else
+            {
+                showErrorMessage("El nif '" + nif + "' no es correcto.");
+            }
+        }
+
+        //--
+        $('#button_check').on("click", function(e){
+            e.preventDefault();
+            if($(this).hasClass("disabled") == false)
+                checkBtnVoted();
+        });
+        
+        //--
+        $('#button_vote').on("click", function(e){
+            e.preventDefault();
+            if($(this).hasClass("disabled") == false)
+                btnVote();
+        });
+        
+        //--
+        function showMessage(msg)
+        {
+            $('#message').removeClass('alert-danger');
+            $('#message').addClass('alert-info');
+            $('#message').html(msg);
+        }
+        //--
+        function showErrorMessage(msg)
+        {
+            $('#message').removeClass('alert-info');
+            $('#message').addClass('alert-danger');
+            $('#message').html(msg);
+            shakeForm($('#message'), 20, 50);
+        }
+        
+        //--
+        $("#form_check").validate({
+            errorPlacement: function(error, element) {         
+                error.insertBefore(element);
+            },
+            rules: {
+                nif_check : {
+                    required: true,
+                    is_nif: true
+                }
+            },
+            messages: {
+                nif_check : {
+                    required: "Indique su NIF."
+                }
+            }
+        });
+    });
+    
+</script>
+{% endblock %}
+
+
+{% block main_container %}
+	<div class="row">
+		<div class="col-xs-12">
+			<h1 class="center">Panel de control</h1>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-xs-12">
+            {% if voteExpired %}
+            <div class="alert alert-info" role="alert">El plazo de la votación ha finalizado.</div>
+            {% else %}
+            
+            <div id="message" class="alert" role="alert"></div>
+            
+            <div class="form-main">
+                {% if canVote %}
+                <form id="form_check" method="post">
+                    <div class="form-group">
+                        <input type="text" name="nif_check" id="nif_check" class="form-control" placeholder="NIF">
+                    </div>
+                    <button id="button_check" type="submit" class="btn btn-block signin">Comprobar</button>
+                    <button id="button_vote" class="btn btn-block signin disabled">Votar</button>
+
+                </form>
+                {% else %}
+                <p>La votación no es posible hasta el próximo día 5-6-7 de Marzo de 2015.</p>
+                {% endif %}
+            </div>
+            {% endif %}
+            
+		</div>
+	</div>
+
+{% endblock %}
+

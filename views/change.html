@@ -6,7 +6,42 @@
 <script>
 	$(document).ready(function() {
 
-	});
+        //--
+        $("#change_form").validate({
+            errorPlacement: function(error, element) {         
+                error.insertBefore(element);
+            },
+            rules: {
+                nif_login : {
+                    required: true,
+                    is_nif: true
+                },
+                old_pass_login : {
+                    required: true
+                },
+                new_pass_login : {
+                    required: true
+                },
+                rep_pass_login : {
+                    required: true
+                }
+            },
+            messages: {
+                nif_login : {
+                    required: "Indique su NIF."
+                },
+                old_pass_login : {
+                    required: "Indique su antigüa contraseña."
+                },
+                new_pass_login : {
+                    required: "Indique su nueva contraseña."
+                },
+                rep_pass_login : {
+                    required: "Repita su nueva contraseña."
+                }
+            }
+        });
+    });
 </script>
 
 {% endblock %}
@@ -21,25 +56,14 @@
 	<div class="row">
 		<div class="col-xs-12">
             <div class="form-main">
-                <form method="post" action="change_pass.php">
+                <form id="change_form" method="post" action="change_pass.php">
                     <div class="form-group">
                         
-                        <div class="input-group margin-bottom-sm">
-                            <span class="input-group-addon"><i class="fa fa-user fa-fw"></i></span>
-                            <input type="text" name="nif_login" id="nif_login" class="form-control" placeholder="NIF">
-                        </div>
-                        <div class="input-group margin-bottom-sm">
-                            <span class="input-group-addon"><i class="fa fa-key fa-fw"></i></span>
-                            <input type="password" name="old_pass_login" id="old_pass_login" class="form-control" placeholder="Antigüa contraseña">
-                        </div>
-                        <div class="input-group margin-bottom-sm">
-                            <span class="input-group-addon"><i class="fa fa-key fa-fw"></i></span>
-                            <input type="password" name="new_pass_login" id="new_pass_login" class="form-control" placeholder="Nueva contraseña">
-                        </div>
-                        <div class="input-group">
-                            <span class="input-group-addon"><i class="fa fa-key fa-fw"></i></span>
-                            <input type="password" name="rep_pass_login" id="rep_pass_login" class="form-control" placeholder="Repita contraseña">
-                        </div>
+                        <input type="text" name="nif_login" id="nif_login" class="form-control" placeholder="NIF">
+                        
+                        <input type="password" name="old_pass_login" id="old_pass_login" class="form-control" placeholder="Antigüa contraseña">
+                        <input type="password" name="new_pass_login" id="new_pass_login" class="form-control" placeholder="Nueva contraseña">
+                        <input type="password" name="rep_pass_login" id="rep_pass_login" class="form-control" placeholder="Repita contraseña">
                         
                     </div>
                     <button id="button_login" type="submit" class="btn btn-block signin">Cambiar</button>

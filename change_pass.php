@@ -3,7 +3,7 @@ include_once "lib/functions.php";
 
 if(isset($_POST["nif_login"]) && isset($_POST["old_pass_login"]) && isset($_POST["new_pass_login"]))
 {
-	$nif      = addslashes($_POST["nif_login"]);
+	$nif      = addslashes(strtoupper($_POST["nif_login"]));
 	$old_pass = addslashes($_POST["old_pass_login"]);
 	$new_pass = addslashes($_POST["new_pass_login"]);
     
@@ -41,7 +41,10 @@ if(isset($_POST["nif_login"]) && isset($_POST["old_pass_login"]) && isset($_POST
             
             // TODO: Check update count
 
-            SendEmail_AlertPassChanged($user['email'], null);
+            if(SendEmail_AlertPassChanged($user['email'], null) == false)
+            {
+                $error = "Se ha producido un error al generar su correo de confirmación. A pesar de esto su contraseña se ha cambiado correctamente. Si este punto se repite continuadamente pongase en contacto con nosotros: candidaturaguanyem@gmail.com";
+            }
         }
         else
         {
@@ -64,7 +67,8 @@ if(isset($_POST["nif_login"]) && isset($_POST["old_pass_login"]) && isset($_POST
     if(isset($error))
         $msg = $error;
     $datos = array('title' => "Cambiar contraseña",
-                   'msg' => $msg);
+                    'msg' => $msg,
+                    'user' => GetAuthenticated());
 
     $template = $twig->loadTemplate('message.html');
     echo $template->render($datos);

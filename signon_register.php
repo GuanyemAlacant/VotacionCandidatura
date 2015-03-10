@@ -1,12 +1,12 @@
 <?php
 include_once "lib/functions.php";
 
-if(IsLogged() == true)
+if(IsLogged() == 1)
 {
     die();
 }
 
-$result = "false";
+$result = "Error: es posible que no se haya podido enviar.";
 if(isset($_POST) && count($_POST) > 0)
 {
     
@@ -28,28 +28,26 @@ if(isset($_POST) && count($_POST) > 0)
     $body .= "<pre>";
     $body .= "'".$_POST["signon_nombre"]."',\t";
     $body .= "'".$_POST["signon_apellidos"]."',\t";
-    $body .= "'".$_POST["signon_nif"]."',\t";
+    $body .= "'".strtoupper ($_POST["signon_nif"])."',\t";
     $body .= "'".$_POST["signon_direccion"]."',\t";
     $body .= "'".$_POST["signon_cp"]."',\t";
     $body .= "'".$_POST["signon_email"]."',\t";
     $body .= "'".$_POST["signon_telefono"]."',\t";
-    $body .= "'".$_POST["signon_fecha_nacimiento"]."',\t";
-    $body .= "'".$_POST["signon_manifiesto"]."',\t";
-    $body .= "'".$_POST["signon_newsletter"]."'";
+    $body .= "'".$_POST["signon_fecha_nacimiento"]."'";
     $body .= "</pre>";
     
     
     $num = SendMailMultiAttach("candidaturaguanyem@gmail.com", "Inscripción votante", $body, $_FILES["file"]["tmp_name"], $_FILES["file"]["name"], $_POST["signon_email"]);
     
-    if($num > 0)
+    //if($num > 0)
     {
         // TODO: Guardar el email para evitar duplicados?
-        $result = "true";
+        $result = "Enviado.";
     }
     
     // TODO: Delete temp files
 }
 
-echo $result;
+echo $result."<br /><a href='inscripcion_papel.php'>volver</a>";
 
 ?>

@@ -1,26 +1,25 @@
 <?php
 
-
 //-------------------------------------
-function SendMailHTML($mail, $subject, $body) 
+function SendMailHTML($from, $mail, $subject, $body) 
 {
-    $from = 'info@guanyemalacant.org';
-
     //para el envío en formato HTML 
     $headers = "MIME-Version: 1.0\r\n"; 
     $headers .= "Content-type: text/html; charset=iso-8859-1\r\n"; 
     //dirección del remitente 
     $headers .= "From: ".$from."\r\n"; 
-    //dirección de respuesta, si queremos que sea distinta que la del remitente 
-    $headers .= "Reply-To: ".$from."\r\n"; 
-    //ruta del mensaje desde origen a destino 
-    $headers .= "Return-path: ".$from."\r\n"; 
-
+//    //dirección de respuesta, si queremos que sea distinta que la del remitente 
+//    $headers .= "Reply-To: ".$from."\r\n"; 
+//    //ruta del mensaje desde origen a destino 
+//    $headers .= "Return-path: ".$from."\r\n"; 
     
-    //file_put_contents("./mail.txt", $body);
- 
+    $ok = mail($mail, $subject, $body, $headers);
+    if($ok == false)
+    {
+        file_put_contents("/tmp/mail_php.log", "\r\n".date('Y-m-d H:i:s')." - Error to: ".$mail.", ".print_r(error_get_last(), true)." -> ".$subject, FILE_APPEND);
+    }
     
-    return mail($mail, $subject, $body, $headers);
+    return $ok;
 }
 
 //-------------------------------------
@@ -78,13 +77,15 @@ function SendMailMultiAttach($to, $subject, $body, $files, $fileNames, $senderma
 
     //echo $subject."\n\n".$headers.$message;
 
-    $ok = @mail($to, $subject, $message, $headers); //, $returnpath); 
+    $ok = mail($to, $subject, $message, $headers); //, $returnpath); 
     if($ok)
     {
         return $i;
     } 
     else
-    { 
+    {
+        file_put_contents("/tmp/mail_php.log", "\r\n".date('Y-m-d H:i:s')." - Error sending: ".$to.", ".print_r(error_get_last(), true), FILE_APPEND);
+
         return 0; 
     }
 }

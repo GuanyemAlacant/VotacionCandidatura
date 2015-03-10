@@ -1,20 +1,18 @@
 <?php
 include_once "lib/functions.php";
 
-if(IsLogged() == true)
+$signonExpired  = GetSignonExpired();
+if($signonExpired)
+{
+    $_SESSION['error'] = "El proceso de inscripción ha finalizado.";
+    header('Location:login.php');
+    die();
+}
+else if(IsLogged() == 1)
 {   
     header('Location:index.php');
     die();
 }
-
-//if(isset($_POST) && count($_POST) > 0)
-//{
-//    echo "<pre>";
-//    var_dump($_POST);
-//    var_dump($_FILES);
-//    echo "</pre>";
-//    //die();
-//}
 
 $template = $twig->loadTemplate('signon.html');
 echo $template->render(array());

@@ -45,11 +45,14 @@ if(isset($_GET["hash"]))
             
             // step5: Send an email
             $data = GetUserDataById($user_id);
-            SendEmail_AlertPassSet($data['email'], $pass); //." - ".$hash);
+            if(SendEmail_AlertPassSet($data['email'], $pass) == false)
+            {
+                $error = "Se ha producido un error al enviar su nueva contraseña. Por favor, espere unos minutos y vuelva a repetir el proceso.";
+            }
         }
         else
         {
-            $error = "La solicitud indicada es inválida.";
+            $error = "El enlace que está utilizando es inválido. Esto quiere decir que ya ha sido utilizado o que han pasado más de 24 horas desde que se generó. Por favor vuelva a generar un <a href='/reset.php'>nuevo enlace de confirmación</a>.";
         }
 	}
 	catch(PDOException $e)
@@ -64,11 +67,12 @@ if(isset($_GET["hash"]))
 	$conn = null;
     
     // Show confirm message
-    $msg = "Se ha restaurado la contraseña con exito.";
+    $msg = "Se ha restaurado la contraseña con éxito. En breve recibirá un correo electrónico con la nueva contraseña.";
     if(isset($error))
         $msg = $error;
     $datos = array('title' => "Restablecer contraseña",
-                   'msg' => $msg);
+                    'msg' => $msg,
+                    'user' => GetAuthenticated());
 
     $template = $twig->loadTemplate('message.html');
     echo $template->render($datos);

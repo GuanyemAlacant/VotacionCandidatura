@@ -23,15 +23,15 @@
                 var imagSrc = "static/images/icon-user-default.png";
                 if(elem.hasClass("vote_selected"))
                 {
-                    $(".vote-first").removeClass("disabled");
+                    //$(".vote-first").removeClass("disabled");
                     elem.removeClass("vote_selected");
                     candidateId = 0;
                 }
                 else
                 {
                     $(".vote-first").removeClass("vote_selected");
-                    $(".vote-first").addClass("disabled");
-                    elem.removeClass("disabled");
+                    //$(".vote-first").addClass("disabled");
+                    //elem.removeClass("disabled");
                     elem.addClass("vote_selected");
 
                     imagSrc = $("img#candidate-image-"+candidateId).attr('src');
@@ -40,6 +40,7 @@
                 //--
                 $("li#first-candidate-item span img.candidate_img").attr('src', imagSrc);
                 $("li#first-candidate-item span img.candidate_img").attr('candidate', candidateId);
+                $("input#vote_first").attr('value', candidateId);
                 
                 elem.blur();
             }
@@ -91,13 +92,14 @@
                 //--
                 $("li#candidate-item-" + voteId + " span img.candidate_img").attr('src', imagSrc);
                 $("li#candidate-item-" + voteId + " span img.candidate_img").attr('candidate', candidateId);
+                $("input#vote_" + voteId).attr('value', candidateId);
                 
                 elem.blur();
             }
         });
         
 
-        $("img.candidate_img").click(function(e){
+        $("img.candidate-thumbnail").click(function(e){
             e.preventDefault();
             
             var candidateId = parseInt($(this).attr('candidate'), 10);
@@ -112,6 +114,38 @@
                 }
             }
         });
+        $("img.candidate-thumbnail-first").click(function(e){
+            e.preventDefault();
+            
+            var candidateId = parseInt($(this).attr('candidate'), 10);
+            if(candidateId > 0)
+            {
+                var block = $("#cl_first-"+candidateId);
+                if(block)
+                {
+                    $('html, body').animate({
+                        scrollTop: block.offset().top - 80
+                    });
+                }
+            }
+        });
+        
+        $('#button_vote').click(function(e){
+            e.preventDefault();
+            
+            $('#modal_confirm').modal('show');
+        });
+        $('#button_vote_cancel').click(function(e){
+            e.preventDefault();
+            
+            $('#modal_confirm').modal('hide');
+        });
+        $('#button_vote_confirm').click(function(e){
+            e.preventDefault();
+            
+            $('#form-vote').submit();
+        });
+        
 	});
 </script>
 {% endblock %}
@@ -120,11 +154,11 @@
 {% block candidate_list %}
 {%if candidates %}
 	<div class="row candidate">
-		<div class="col-xs-12 hidden-sm candidate-selected-container">
+		<div class="col-xs-12 hidden-xs candidate-selected-container">
             <ul class="candidate-selected-list">
-                <li class="candidate-selected-placeholder" id="first-candidate-item"><span><div></div><img class="candidate_img" src="static/images/icon-user-default.png" /></span></li>
+                <li class="candidate-selected-placeholder" id="first-candidate-item"><span><div></div><img class="candidate_img candidate-thumbnail-first" src="static/images/icon-user-default.png" /></span></li>
                 {% for i in 1..8 %}
-                <li class="candidate-selected-placeholder" id="candidate-item-{{i}}"><span><div>1/{{i}}</div><img class="candidate_img" src="static/images/icon-user-default.png" /></span></li>
+                <li class="candidate-selected-placeholder" id="candidate-item-{{i}}"><span><div>{{i}}º</div><img class="candidate_img candidate-thumbnail" src="static/images/icon-user-default.png" /></span></li>
                 {% endfor %}
             </ul>
         </div>
@@ -135,29 +169,67 @@
 {% block main_container %}
 	<div class="row">
 		<div class="col-xs-12">
-			<h1 class="center">Listado de candidaturas <a href="#" alt="Ayuda" target="_blank"><i class="fa fa-info-circle"></i></a></h1>
-            
+			<h1 class="center">Primarias abiertas</h1>
             {%if candidates %}
+            <h1 class="center"><a data-toggle="modal" href="#modal_help" class="fa fa-info-circle"> Ayuda</a></h1>
+
+            <div id="modal_help" class="modal fade">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                            <h2 class="modal-title">Ayuda</h2>
+                        </div>
+                        <div class="modal-body">
+                            {% include 'texto_ayuda.html' %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            {% set showListFirst = 1 %}
+            {% if showListFirst %}
+            <h1 class="center">Cabeza de lista</h1>
+            <div class="row center">
+                {% for candidate in candidates %}
+                {% if candidate.encabeza %}
+                
+                {% set photo = "static/images/no_photo.jpg" %}
+                {% if candidate.url_foto %}
+                    {% set photo = candidate.url_foto %}
+                {% endif %}
+                <button type="button" id="cl_first-{{candidate.id}}" class="btn btn-default vote-first"><img id="candidate-first-image-{{candidate.id}}" class="media-object candidate_img" src="{{photo}}" style="display:inherit"/><p>{{candidate.nombre}}</p></button>
+                {% endif %}
+                {% endfor %}
+            </div>
+            {% endif %}
+            
+			<h1 class="center">Candidatos y Candidatas</h1>
+            
             <ul class="list-group candidateGroup">
                 {% for candidate in candidates %}
+                
+                {% set photo = "static/images/no_photo.jpg" %}
+                {% if candidate.url_foto %}
+                    {% set photo = candidate.url_foto %}
+                {% endif %}
                 <li class="list-group-item candidateItem" id="candidate-block-{{candidate.id}}">
                     <div class="media">
-                        <div class="media-left media-middle"><a href="{{candidate.url_detalle}}" alt="Abrir perfil del candidato" target="_blank"><img id="candidate-image-{{candidate.id}}" class="media-object candidate_img" src="{{candidate.url_foto}}" /></a></div>
+                        <div class="media-left media-middle"><a href="{{candidate.url_detalle}}" alt="Abrir perfil del candidato" target="_blank"><img id="candidate-image-{{candidate.id}}" class="media-object candidate_img" src="{{photo}}" /></a></div>
                         <div class="media-body">
                             <h4><span class="vote-asigned"></span> <a href="{{candidate.url_detalle}}" alt="Abrir perfil del candidato" target="_blank">{{candidate.nombre}} <i class="fa fa-arrow-right"></i></a></h4>
                             <p>{{candidate.descripcion | raw}}</p>
 
                             <div class="btn-toolbar pull-right" role="toolbar" aria-label="vote">
+                                {% if showListFirst != 1 %}
                                 <button type="button" id="cl-{{candidate.id}}" class="btn btn-primary vote-first pull-left">Cabeza</button>
+                                {% endif %}
+                                
                                 <div id="vote-panel-{{candidate.id}}" class="btn-group vote-panel" role="group" aria-label="votation-group">
-                                    <button type="button" id="c-{{candidate.id}}_o-1" class="btn btn-default vote-option vote-option-1 ">1</button>
-                                    <button type="button" id="c-{{candidate.id}}_o-2" class="btn btn-default vote-option vote-option-2 ">1/2</button>
-                                    <button type="button" id="c-{{candidate.id}}_o-3" class="btn btn-default vote-option vote-option-3 ">1/3</button>
-                                    <button type="button" id="c-{{candidate.id}}_o-4" class="btn btn-default vote-option vote-option-4 ">1/4</button>
-                                    <button type="button" id="c-{{candidate.id}}_o-5" class="btn btn-default vote-option vote-option-5 ">1/5</button>
-                                    <button type="button" id="c-{{candidate.id}}_o-6" class="btn btn-default vote-option vote-option-6 ">1/6</button>
-                                    <button type="button" id="c-{{candidate.id}}_o-7" class="btn btn-default vote-option vote-option-7 ">1/7</button>
-                                    <button type="button" id="c-{{candidate.id}}_o-8" class="btn btn-default vote-option vote-option-8 ">1/8</button>
+                                    
+                                    {% for i in 1..8 %}
+                                    <button type="button" id="c-{{candidate.id}}_o-{{i}}" class="btn btn-default vote-option vote-option-{{i}} ">{{i}}º</button>
+                                    {% endfor %}
                                 </div>
                             </div>
                         </div>
@@ -166,8 +238,31 @@
                 {% endfor %}
             </ul>
             
+            <form id="form-vote" method="post" action="vote.php">
+                <input type="hidden" id="vote_first" name="vote_first" />
+                {% for i in 1..8 %}
+                <input type="hidden" id="vote_{{i}}" name="vote_{{i}}" value="0" />
+                {% endfor %}
+                <button id="button_vote" class="btn btn-block signin">Votar</button>
+            </form>
             
-            <button id="button_login" type="submit" class="btn btn-block signin disabled">Votar</button>
+            <div id="modal_confirm" class="modal fade">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                            <h4 class="modal-title">Confirme su voto</h4>
+                        </div>
+                        <div class="modal-body">
+                            <p>Pulsando en contiuar finalizará la votación, si no ha terminado pulse en cancelar para realizar modificaciones.</p>
+                            <p>Recuerde que esta acción es irreversible, por lo que sólamente deberá confirmar la votación en caso de tenerla configurada a su gusto.</p>
+
+                            <p class="vote_summary"></p>
+                            <p><a id="button_vote_confirm" class="btn btn-success" href="#" role="button">Contiuar</a> <a id="button_vote_cancel" class="btn btn-default" role="button">Cancel</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
             
             
             {% else %}
@@ -177,8 +272,12 @@
                     <p>El proceso electoral todavía no esta en marcha. Por favor, vuelva en las fechas indicadas.</p>
                 </div>
             </div>
-            {% endif %}            
+            {% endif %}
 		</div>
 	</div>
+
+    <div class="row">
+        {% include 'texto_ayuda.html' %}
+    </div>
 {% endblock %}
 

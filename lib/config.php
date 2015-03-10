@@ -4,6 +4,17 @@
 // descomentar en modo debug
 //ini_set('display_errors', '1');
 
+define("FromMail", "web@guanyemalacant.net");
+define("BaseURL", "http://candidaturas.guanyemalacant.net");
+
+define("LOG_MSG",  1);
+define("LOG_WARN", 2);
+define("LOG_ERROR",  3);
+
+define("USE_HTTP_ONLY", true);
+
+define("ADMIN_CODE_ID", 0)
+
 //--
 // Base de datos
 function getBBDD()
@@ -23,7 +34,7 @@ function getBBDD()
 //--
 function getCaptchaValidationURL($data)
 {
-    $captchaSecret = "SECRET";
+    $captchaSecret = "GOOGLE_CAPTCHA_CODE";
     
     $url = "https://www.google.com/recaptcha/api/siteverify";
     $url = $url."?secret=".$captchaSecret."&response=".urlencode($data)."&remoteip=".$_SERVER['REMOTE_ADDR'];

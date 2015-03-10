@@ -3,10 +3,10 @@ header.app-header {
   top: 0;
   left: 0;
   right: 0;
-  height: 60px;
+  /* height: 60px; */
   background: #C60C30;
   color: #fff;
-  padding-left: 20px;
+  padding: 0 20px;
   font-weight: bold;
   text-transform: uppercase;
   font-size: 12px;
@@ -75,6 +75,9 @@ header.app-header .user-nav .login:hover {
 /* index */
 .principal {
     margin-top: 80px;
+}
+.principal-simulation {
+    margin-top: 160px;
 }
 
 #tabsIndex{
@@ -192,6 +195,7 @@ text-align: center;
 .form-main {
   background-color: #C60C30;
   padding: 40px 50px;
+  color: #fff;
 }
 .form-footer {
   border-top: 2px solid #404040;
@@ -446,6 +450,8 @@ nav a:hover, nav a:focus {
 {
     border-radius: 50%;
     border: 2px solid #c62831;
+    width: 128px;
+    height: 128px;
 }
 .remark
 {
@@ -476,7 +482,7 @@ label.error {
     position: absolute;
     top: 0;
     left: 15%;
-    width: 70%;
+    width: 600px;
     z-index: 999;
 }
 .candidate-selected-list
@@ -495,6 +501,7 @@ label.error {
     width: 48px;
     height: 48px;
     display: block;
+    text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
 }
 
 .candidate-selected-placeholder span div {
@@ -509,4 +516,19 @@ label.error {
     width: 100%;
     height: 100%;
     display: inline;
+}
+
+.vote-simulation
+{
+    background: #faa;
+    color: #000;
+    text-transform: none;
+    font-weight: normal;
+    text-align: center;
+}
+
+.vote-simulation > span
+{
+    font-size: 3em;
+    font-weight: bold;
 }

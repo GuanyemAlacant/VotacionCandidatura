@@ -5,8 +5,24 @@
 {% block scripts %}
 <script>
 	$(document).ready(function() {
-
-	});
+        //--
+        $("#reset_form").validate({
+            errorPlacement: function(error, element) {         
+                error.insertBefore(element);
+            },
+            rules: {
+                nif_login : {
+                    required: true,
+                    is_nif: true
+                }
+            },
+            messages: {
+                nif_login : {
+                    required: "Indique su NIF."
+                }
+            }
+        });
+    });
 </script>
 
 {% endblock %}
@@ -21,13 +37,10 @@
 	<div class="row">
 		<div class="col-xs-12">
             <div class="form-main">
-                <form method="post" action="reset_pass_confirm.php">
+                <form id="reset_form" method="post" action="reset_pass_confirm.php">
                     <div class="form-group">
                         
-                        <div class="input-group margin-bottom-sm">
-                            <span class="input-group-addon"><i class="fa fa-user fa-fw"></i></span>
-                            <input type="text" name="nif_login" id="nif_login" class="form-control" placeholder="NIF">
-                        </div>
+                        <input type="text" name="nif_login" id="nif_login" class="form-control" placeholder="NIF">
                         
                     </div>
                     <button id="button_login" type="submit" class="btn btn-block signin">Restablecer</button>

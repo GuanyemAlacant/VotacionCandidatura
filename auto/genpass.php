@@ -29,8 +29,14 @@ try
         $result = $conn->prepare("UPDATE cnd_users SET password=:new_pass WHERE id=:id;");
         if($result->execute($userData) !== FALSE && $result->rowCount() > 0)
         {
-            SendEmail_AlertPassGenerated($user['email'], $newPass);
-            $error = "Enviado correctamente.";
+            if(SendEmail_AlertPassGenerated($user['email'], $newPass) == false)
+            {
+                $error = "Se ha producido un error al enviar la contraseña.";
+            }
+            else
+            {
+                $error = "Enviado correctamente.";
+            }
         }
     }
     else
