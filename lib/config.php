@@ -15,7 +15,7 @@ define("USE_HTTP_ONLY", true);
 
 define("ADD_VOTE_TRACE", false);
 
-define("ADMIN_CODE_ID", 0)
+define("ADMIN_CODE_ID", 0);
 
 //--
 // Base de datos
