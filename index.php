@@ -23,7 +23,8 @@ try
                     'canVote' => $canVote,
                     'candidates' => $candidates,
                     'user' => $user,
-                    'simulation' => $simulation);
+                    'simulation' => $simulation,
+                    'num_votes' => NUM_MAX_VOTES);
 }
 catch(Exception $e)
 {

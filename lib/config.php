@@ -17,6 +17,8 @@ define("ADD_VOTE_TRACE", false);
 
 define("ADMIN_CODE_ID", 0);
 
+define("NUM_MAX_VOTES", 8);
+
 //--
 // Base de datos
 function getBBDD()

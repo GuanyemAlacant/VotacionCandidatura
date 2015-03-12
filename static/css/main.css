@@ -482,7 +482,7 @@ label.error {
     position: absolute;
     top: 0;
     left: 15%;
-    width: 600px;
+    width: 635px;
     z-index: 999;
 }
 .candidate-selected-list

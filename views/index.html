@@ -157,7 +157,7 @@
 		<div class="col-xs-12 hidden-xs candidate-selected-container">
             <ul class="candidate-selected-list">
                 <li class="candidate-selected-placeholder" id="first-candidate-item"><span><div></div><img class="candidate_img candidate-thumbnail-first" src="static/images/icon-user-default.png" /></span></li>
-                {% for i in 1..8 %}
+                {% for i in 1..num_votes %}
                 <li class="candidate-selected-placeholder" id="candidate-item-{{i}}"><span><div>{{i}}º</div><img class="candidate_img candidate-thumbnail" src="static/images/icon-user-default.png" /></span></li>
                 {% endfor %}
             </ul>
@@ -227,7 +227,7 @@
                                 
                                 <div id="vote-panel-{{candidate.id}}" class="btn-group vote-panel" role="group" aria-label="votation-group">
                                     
-                                    {% for i in 1..8 %}
+                                    {% for i in 1..num_votes %}
                                     <button type="button" id="c-{{candidate.id}}_o-{{i}}" class="btn btn-default vote-option vote-option-{{i}} ">{{i}}º</button>
                                     {% endfor %}
                                 </div>
@@ -240,7 +240,7 @@
             
             <form id="form-vote" method="post" action="vote.php">
                 <input type="hidden" id="vote_first" name="vote_first" />
-                {% for i in 1..8 %}
+                {% for i in 1..num_votes %}
                 <input type="hidden" id="vote_{{i}}" name="vote_{{i}}" value="0" />
                 {% endfor %}
                 <button id="button_vote" class="btn btn-block signin">Votar</button>
