@@ -6,7 +6,6 @@
 <script src='https://www.google.com/recaptcha/api.js?hl=es'></script>
 <script>
     
-
 	$(document).ready(function() {
         
         //--
@@ -36,6 +35,7 @@
         //--
         {% if canVote %}
         {% else %}
+        writeStartDate();
         countDown();
         {% endif %}
     });
@@ -46,7 +46,18 @@
         $('#login_help').hide();
     }
     
-    
+    function writeStartDate()
+    {
+        var t = '{{startDate|raw}}'.split(/[- :]/);
+        if(t.length < 6)
+            return;
+        
+        var limitDate = new Date(t[0], t[1]-1, t[2], t[3], t[4], t[5]);
+        var options = { year: 'numeric', month: 'long', day: 'numeric' };
+
+        $('#start_date').html(limitDate.toLocaleDateString('es-ES', options) + " a partir de las " + t[3]+":"+t[4]+":"+t[5]);
+    }
+
     function countDown()
     {
         var t = '{{startDate|raw}}'.split(/[- :]/);
@@ -153,7 +164,7 @@
                     <p id="login_help">Marque la casilla de validación para activar el formulario.</p>
                 </form>
                 {% else %}
-                <p>La votación no es posible hasta el próximo día 5-6-7 de Marzo de 2015.</p>
+                <p>La votación no es posible hasta el próximo día <span id="start_date"></span>.</p>
                 <p id="countdown"></p>
                 {% endif %}
             </div>
