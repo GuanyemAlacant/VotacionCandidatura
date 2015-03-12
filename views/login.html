@@ -78,12 +78,18 @@
             
             if(currentInSeconds > 0)
             {
-            
-                display.innerHTML = "Quedan:<br />" + 
-                                periods[3] + ((periods[3] == 1) ? " día "     : " días ") + 
-                                periods[2] + ((periods[2] == 1) ? " hora "    : " horas ") + 
-                                periods[1] + ((periods[1] == 1) ? " minuto "  : " minutos ") + 
-                                periods[0] + ((periods[0] == 1) ? " segundo " : " segundos ");
+                var timeText = "Quedan:<br />";
+                if(periods[4] > 0)
+                    timeText += periods[4] + ((periods[4] == 1) ? " semana "  : " semanas ");
+                if(periods[4] > 0 || periods[3] > 0)
+                    timeText += periods[3] + ((periods[3] == 1) ? " día "     : " días ");
+                if(periods[4] > 0 || periods[3] > 0 || periods[2] > 0)
+                    timeText += periods[2] + ((periods[2] == 1) ? " hora "    : " horas ");
+                if(periods[4] > 0 || periods[3] > 0 || periods[2] > 0 || periods[1] > 0)
+                    timeText += periods[1] + ((periods[1] == 1) ? " minuto "  : " minutos ");
+                if(periods[4] > 0 || periods[3] > 0 || periods[2] > 0 || periods[1] > 0 || periods[0] > 0)
+                    timeText += periods[0] + ((periods[0] == 1) ? " segundo " : " segundos ");
+                display.innerHTML = timeText;
             }
             else
             {
