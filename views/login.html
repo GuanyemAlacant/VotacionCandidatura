@@ -164,7 +164,7 @@
                     <div class="form-group">
                         <input type="text" name="nif_login" id="nif_login" class="form-control" placeholder="NIF">
                         <input type="password" name="pass_login" id="pass_login" class="form-control" placeholder="Contraseña">
-                        <div class="g-recaptcha" data-sitekey="6LduegITAAAAAAbeKJce7RONPB2vcHBXlSxe-D3F" data-callback="enable_login"></div>
+                        <div class="g-recaptcha" data-sitekey="{{recaptcha_code|raw}}" data-callback="enable_login"></div>
                     </div>
                     <button id="button_login" type="submit" class="btn btn-block signin disabled">Entrar</button>
                     <p id="login_help">Marque la casilla de validación para activar el formulario.</p>

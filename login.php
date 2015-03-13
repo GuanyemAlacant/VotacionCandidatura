@@ -30,7 +30,8 @@ if(IsLogged() != 1)
                     'endDate' => $endDate,
                     'signonExpired' => $signonExpired,
                     'msg' => $msg,
-                    'simulation' => $simulation);
+                    'simulation' => $simulation,
+                    'recaptcha_code' => GOOGLE_CAPTCHA_PUBLIC_CODE);
 
     $template = $twig->loadTemplate('login.html');
     echo $template->render($datos);

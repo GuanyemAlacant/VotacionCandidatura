@@ -19,6 +19,9 @@ define("ADMIN_CODE_ID", 0);
 
 define("NUM_MAX_VOTES", 8);
 
+define("GOOGLE_CAPTCHA_PUBLIC_CODE", "YOUR_PUBLIC_CODE");
+define("GOOGLE_CAPTCHA_SECRET_CODE", "YOUR_SECRET_CODE");
+
 //--
 // Base de datos
 function getBBDD()
@@ -38,10 +41,8 @@ function getBBDD()
 //--
 function getCaptchaValidationURL($data)
 {
-    $captchaSecret = "GOOGLE_CAPTCHA_CODE";
-    
     $url = "https://www.google.com/recaptcha/api/siteverify";
-    $url = $url."?secret=".$captchaSecret."&response=".urlencode($data)."&remoteip=".$_SERVER['REMOTE_ADDR'];
+    $url = $url."?secret=".GOOGLE_CAPTCHA_SECRET_CODE."&response=".urlencode($data)."&remoteip=".$_SERVER['REMOTE_ADDR'];
     return $url;
 }
 
