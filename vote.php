@@ -17,12 +17,12 @@ try
         throw new Exception("Los datos de votación no se han enviado según el método adecuado.");
     }
 
-    for($_i = 1; $_i < 8; $_i++)
+    for($_i = 1; $_i < NUM_MAX_VOTES; $_i++)
     {
         $val1 = intval($_POST["vote_".$_i]);
         if($val1 != 0)
         {
-            for($_j = $_i+1; $_j <= 8; $_j++)
+            for($_j = $_i+1; $_j <= NUM_MAX_VOTES; $_j++)
             {
                 $val2 = intval($_POST["vote_".$_j]);
                 if($val2 != 0 && $val1 == $val2)
@@ -40,21 +40,23 @@ try
     }
     
     //--
-    $data = array('first' => intval($_POST["vote_first"]),
-                'v1' => intval($_POST["vote_1"]),
-                'v2' => intval($_POST["vote_2"]),
-                'v3' => intval($_POST["vote_3"]),
-                'v4' => intval($_POST["vote_4"]),
-                'v5' => intval($_POST["vote_5"]),
-                'v6' => intval($_POST["vote_6"]),
-                'v7' => intval($_POST["vote_7"]),
-                'v8' => intval($_POST["vote_8"]),
-                'data' => $hashData
-    );
+    $sqlNames  = "first, data";
+    $sqlValues = ":first, :data";
+    
+    $data = array();
+    $data['first'] = intval($_POST["vote_first"]);
+    $data['data']  = $hashData;
+    for($_i = 1; $_i < NUM_MAX_VOTES; $_i++)
+    {
+        $data['v'.$_i] = intval($_POST["vote_".$_i]);
+        $sqlNames     .= ", v".$_i;
+        $sqlValues    .= ", :v".$_i;
+    }
+
     $userData = array('id' => $user['id']);
 
     //--
-    $result = $conn->prepare("INSERT INTO cnd_votes (first, v1, v2, v3, v4, v5, v6, v7, v8, data) VALUES (:first, :v1, :v2, :v3, :v4, :v5, :v6, :v7, :v8, :data);");
+    $result = $conn->prepare("INSERT INTO cnd_votes (".$sqlNames.") VALUES (".$sqlValues.");");
     if($result->execute($data) !== FALSE && $result->rowCount() == 1)
     {
         $result = $conn->prepare("UPDATE cnd_users SET voted=1 WHERE id=:id");
