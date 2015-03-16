@@ -46,7 +46,7 @@ try
     $data = array();
     $data['first'] = intval($_POST["vote_first"]);
     $data['data']  = $hashData;
-    for($_i = 1; $_i < NUM_MAX_VOTES; $_i++)
+    for($_i = 1; $_i <= NUM_MAX_VOTES; $_i++)
     {
         $data['v'.$_i] = intval($_POST["vote_".$_i]);
         $sqlNames     .= ", v".$_i;
